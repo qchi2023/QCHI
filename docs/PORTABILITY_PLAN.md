@@ -1,7 +1,7 @@
 # Portability Plan
 
 ## Core principle
-Keep one canonical core (`skills/qchi-research-layer`) and small host adapters.
+Keep one canonical core (`skills/qchi-r`) and small host adapters.
 
 ## Core package
 Contains:

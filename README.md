@@ -12,6 +12,6 @@ Build one reusable system that works across hosts (OpenClaw, Antigravity, Cursor
 - `docs/PORTABILITY_PLAN.md`
 
 ## Portable skill package
-- `skills/qchi-research-layer/`
-- OpenClaw package output: `dist/qchi-research-layer.skill`
-- Generic package output: `dist/qchi-research-layer-portable.zip`
+- `skills/qchi-r/`
+- OpenClaw package output: `dist/qchi-r.skill`
+- Generic package output: `dist/qchi-r-portable.zip`

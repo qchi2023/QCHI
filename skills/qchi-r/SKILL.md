@@ -1,9 +1,9 @@
 ---
-name: qchi-research-layer
-description: Portable, host-agnostic research operating layer for rigorous theoretical-physics work. Use for derivation-first problem solving, paper reproduction, LyX-first artifact workflows, parameter-space studies, plot quality gates, and publication-ready claim provenance with arXiv-first references.
+name: qchi-r
+description: QCHI-R portable, host-agnostic research operating layer for rigorous theoretical-physics work. Use for derivation-first problem solving, paper reproduction, LyX-first artifact workflows, parameter-space studies, plot quality gates, and publication-ready claim provenance with arXiv-first references.
 ---
 
-# QCHI Research Layer
+# QCHI-R
 
 This is the canonical portable layer. Host adapters live under `adapters/`.
 
