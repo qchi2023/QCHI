@@ -2,4 +2,5 @@
 
 - Use `templates/SYSTEM_PROMPT.md` as system behavior anchor.
 - Use `templates/OUTPUT_TEMPLATE.md` as enforced response contract.
-- Apply `checklists/QUALITY_GATE.md` before final output.
+- Validate outputs using `scripts/quality_gate_check.py`.
+- Run learning-loop scripts after meaningful tasks.

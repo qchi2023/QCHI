@@ -42,3 +42,18 @@ See `references/WORKFLOW_MODES.md` and `references/PAPER_REPRO_FLOW.md`.
 
 ## Quality gate
 Before finalizing, pass all checks in `checklists/QUALITY_GATE.md`.
+Run helper:
+
+`python3 scripts/quality_gate_check.py --input <response.md>`
+
+## Continuous learning loop operations
+After meaningful work:
+1. Record failures:
+   - `python3 scripts/record_failure.py --task ... --type ... --symptom ... --root ... --fix ...`
+2. Promote validated heuristic:
+   - `python3 scripts/promote_heuristic.py --rule "..." --evidence "..."`
+3. Compare eval delta before/after:
+   - `python3 scripts/run_evals.py --current current.json --baseline baseline.json --min-delta 0.0`
+4. Keep/revert behavior change based on eval result.
+
+See `references/LEARNING_LOOP_PROTOCOL.md`.

@@ -1,5 +1,6 @@
 # OpenCode Adapter
 
-- Load core behavior from `templates/SYSTEM_PROMPT.md`.
+- Load behavior from `templates/SYSTEM_PROMPT.md`.
 - Require sectioned output from `templates/OUTPUT_TEMPLATE.md`.
-- Enforce quality gate checklist pre-finalization.
+- Validate with `scripts/quality_gate_check.py`.
+- Run learning-loop scripts to log failures/heuristics/evals.
