@@ -1,4 +1,6 @@
-# QCHI-AI Portable Top Layer
+# QCHI
+
+## QCHI-AI Portable Top Layer
 
 Portable, model-agnostic top-layer spec for a rigorous physics-theorist assistant.
 
