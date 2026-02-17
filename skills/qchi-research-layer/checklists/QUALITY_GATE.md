@@ -11,3 +11,4 @@ All items must pass:
 - [ ] Consistency check passed
 - [ ] Claim tags present
 - [ ] References present
+- [ ] Failure/heuristic/eval updates recorded (or explicitly deferred with reason)

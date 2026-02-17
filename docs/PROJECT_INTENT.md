@@ -25,6 +25,11 @@ A rigor-first workflow system that helps run real research tasks end-to-end:
    - REPRODUCED_FROM_SOURCE
    - INFERRED_ASSUMPTION
    - NEW_EXTENSION
+7. Continuous learning loop is mandatory:
+   - log failures
+   - extract heuristics
+   - run evals
+   - update behavior only when eval deltas confirm improvement
 
 ## Artifact tracks (LyX-first)
 - `notes.lyx`

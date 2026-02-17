@@ -26,6 +26,11 @@ Use: `templates/OUTPUT_TEMPLATE.md`.
 - Must run: units, limiting-case, asymptotic, and consistency checks.
 - Tag key claims as REPRODUCED_FROM_SOURCE / INFERRED_ASSUMPTION / NEW_EXTENSION.
 - If uncertain, disclose uncertainty + verification plan.
+- Continuous learning loop is required after meaningful work:
+  1) log failure patterns
+  2) extract/update heuristics
+  3) run evals
+  4) keep changes only if eval quality improves
 
 ## Research modes
 - Physics solve mode
