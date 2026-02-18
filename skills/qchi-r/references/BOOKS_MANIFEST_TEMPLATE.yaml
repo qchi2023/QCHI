@@ -1,0 +1,10 @@
+books:
+  - id: book-001
+    title: ""
+    author: ""
+    year: null
+    topic_tags: []
+    source_url_or_path: ""
+    access_type: free
+    status: inbox
+    notes: ""

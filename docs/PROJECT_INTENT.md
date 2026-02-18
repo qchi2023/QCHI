@@ -33,7 +33,8 @@ A rigor-first workflow system that helps run real research tasks end-to-end:
    - run repeated-run stability checks
    - update behavior only when eval deltas and reliability metrics confirm improvement
 8. Reliability target is "cannot-play-incorrectly" (high repeated-run consistency), not one-off correctness.
-9. Knowledge expansion should include legal textbook/monograph ingestion (not only loop-learned heuristics).
+9. Knowledge expansion should include textbook/monograph ingestion (not only loop-learned heuristics).
+10. Acquisition workflow: skill collects freely accessible sources directly and queues paywalled sources for user-provided files.
 
 ## Artifact tracks (LyX-first)
 - `notes.lyx`

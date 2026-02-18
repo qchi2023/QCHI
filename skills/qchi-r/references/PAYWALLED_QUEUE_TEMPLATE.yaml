@@ -1,0 +1,10 @@
+paywalled_queue:
+  - id: source-001
+    title: ""
+    author: ""
+    year: null
+    reason_needed: ""
+    priority: high
+    requested_on: ""
+    user_provided_path: ""
+    status: waiting
