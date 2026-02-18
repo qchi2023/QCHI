@@ -42,7 +42,8 @@ See `references/WORKFLOW_MODES.md` and `references/PAPER_REPRO_FLOW.md`.
 For reliability and verification enforcement, also use:
 - `references/RELIABILITY_TARGETS.md`
 - `references/MULTI_PATH_VERIFICATION.md`
-- `references/COST_RELIABILITY_POLICY.md`.
+- `references/COST_RELIABILITY_POLICY.md`
+- `references/KNOWLEDGE_SOURCES_POLICY.md`.
 
 ## Quality gate
 Before finalizing, pass all checks in `checklists/QUALITY_GATE.md`.
