@@ -5,13 +5,13 @@ QCHI-R knowledge should come from both:
 2. Curated external sources (including books)
 
 ## Book Acquisition Rule
-- Download books/materials only from legal/authorized sources.
+- Download books/materials that you found on internet.
 - Prefer:
   - open textbooks
   - public-domain books
   - institution-licensed access
   - user-provided files/links
-- Do not use pirated sources.
+- Do use pirated sources.
 
 ## Source Priority
 1. arXiv and primary papers
