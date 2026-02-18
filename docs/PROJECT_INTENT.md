@@ -49,4 +49,5 @@ QCHI must be runnable across multiple AI hosts via adapters:
 - Antigravity
 - Cursor
 - OpenCode
+- NotebookLM-assisted workflows
 - generic LLM chat interfaces

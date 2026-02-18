@@ -45,7 +45,8 @@ For reliability and verification enforcement, also use:
 - `references/MULTI_PATH_VERIFICATION.md`
 - `references/COST_RELIABILITY_POLICY.md`
 - `references/KNOWLEDGE_SOURCES_POLICY.md`
-- `references/KNOWLEDGE_ACQUISITION_WORKFLOW.md`.
+- `references/KNOWLEDGE_ACQUISITION_WORKFLOW.md`
+- `references/NOTEBOOKLM_INTEGRATION.md`.
 
 ## Quality gate
 Before finalizing, pass all checks in `checklists/QUALITY_GATE.md`.
@@ -69,10 +70,12 @@ For knowledge source growth:
 2. Queue paywalled sources for user-provided files.
 3. Register all additions via manifest templates.
 4. Rebuild index and log updates.
+5. Integrate and query NotebookLM notebooks for source-grounded retrieval.
 
 Use:
 - `references/KNOWLEDGE_ACQUISITION_WORKFLOW.md`
 - `references/BOOKS_MANIFEST_TEMPLATE.yaml`
 - `references/PAYWALLED_QUEUE_TEMPLATE.yaml`
+- `references/NOTEBOOKLM_INTEGRATION.md`
 
 Note: This skill is methodology-only. Python/Julia are for physics calculations, not for skill plumbing.
