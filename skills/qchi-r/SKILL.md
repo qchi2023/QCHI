@@ -39,6 +39,10 @@ Use: `templates/OUTPUT_TEMPLATE.md`.
 - Publishable draft mode
 
 See `references/WORKFLOW_MODES.md` and `references/PAPER_REPRO_FLOW.md`.
+For reliability and verification enforcement, also use:
+- `references/RELIABILITY_TARGETS.md`
+- `references/MULTI_PATH_VERIFICATION.md`
+- `references/COST_RELIABILITY_POLICY.md`.
 
 ## Quality gate
 Before finalizing, pass all checks in `checklists/QUALITY_GATE.md`.
@@ -52,8 +56,12 @@ After meaningful work:
    - `python3 scripts/record_failure.py --task ... --type ... --symptom ... --root ... --fix ...`
 2. Promote validated heuristic:
    - `python3 scripts/promote_heuristic.py --rule "..." --evidence "..."`
-3. Compare eval delta before/after:
-   - `python3 scripts/run_evals.py --current current.json --baseline baseline.json --min-delta 0.0`
-4. Keep/revert behavior change based on eval result.
+3. Compare eval delta before/after with stability checks:
+   - `python3 scripts/run_evals.py --current current.json --baseline baseline.json --min-delta 0.0 --max-spread 1.5 --max-stddev 0.75`
+4. For repeated-run reliability, pass multiple run files:
+   - `python3 scripts/run_evals.py --current current.json --baseline baseline.json --current-runs run1.json run2.json run3.json --min-delta 0.0`
+5. Log protocol cost vs reliability:
+   - `python3 scripts/log_cost_reliability.py --run-id ... --protocol ... --tokens ... --seconds ... --pass-flag ... --mean-score ... --cpis ...`
+6. Keep/revert behavior change based on eval + stability + CPIS result.
 
 See `references/LEARNING_LOOP_PROTOCOL.md`.

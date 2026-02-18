@@ -11,4 +11,7 @@ All items must pass:
 - [ ] Consistency check passed
 - [ ] Claim tags present
 - [ ] References present
+- [ ] Multi-path verification done for high-impact claims (or explicitly deferred)
 - [ ] Failure/heuristic/eval updates recorded (or explicitly deferred with reason)
+- [ ] Stability + CPIS check completed for behavior changes
+- [ ] Cost vs reliability log updated (or explicitly deferred)

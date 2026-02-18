@@ -29,7 +29,9 @@ A rigor-first workflow system that helps run real research tasks end-to-end:
    - log failures
    - extract heuristics
    - run evals
-   - update behavior only when eval deltas confirm improvement
+   - run repeated-run stability checks
+   - update behavior only when eval deltas and reliability metrics confirm improvement
+8. Reliability target is "cannot-play-incorrectly" (high repeated-run consistency), not one-off correctness.
 
 ## Artifact tracks (LyX-first)
 - `notes.lyx`

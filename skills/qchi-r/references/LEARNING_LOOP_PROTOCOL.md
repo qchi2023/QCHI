@@ -7,8 +7,10 @@ This is the highest-priority long-term behavior for QCHI.
 2. Record failures and near-misses.
 3. Convert repeated patterns into heuristics.
 4. Run evaluation set before/after changes.
-5. Keep behavior updates only when eval deltas improve quality.
-6. Log what changed and why.
+5. Run repeated-eval stability checks and compute CPIS.
+6. Track cost vs reliability gain for the protocol used.
+7. Keep behavior updates only when eval/stability/CPIS criteria pass.
+8. Log what changed and why.
 
 ## Required artifacts
 - `failure_patterns.md`

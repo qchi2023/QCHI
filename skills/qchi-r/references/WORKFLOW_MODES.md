@@ -3,6 +3,7 @@
 ## 1) Physics solve mode
 - derive-first answer path
 - mandatory checks
+- multi-path verification for high-impact claims
 - final interpretation
 
 ## 2) Paper reproduction mode
