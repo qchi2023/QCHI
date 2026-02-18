@@ -34,6 +34,7 @@ Use: `templates/OUTPUT_TEMPLATE.md`.
   4) keep changes only if eval quality improves
 
 ## Research modes
+- Unfinished project mode (default when user says "work on project X")
 - Physics solve mode
 - Paper reproduction mode
 - Parameter-space/plot mode
@@ -60,7 +61,8 @@ For reliability and verification enforcement, also use:
 - `references/DOMAIN_PLAYBOOK_QI.md`
 - `references/NOTEBOOKLM_SOURCE_MAPPING.md`
 - `references/PROMOTION_GATES.md`
-- `references/REGRESSION_SUITE.md`.
+- `references/REGRESSION_SUITE.md`
+- `references/UNFINISHED_PROJECT_MODE.md`.
 
 ## Quality gate
 Before finalizing, pass all checks in `checklists/QUALITY_GATE.md`.
