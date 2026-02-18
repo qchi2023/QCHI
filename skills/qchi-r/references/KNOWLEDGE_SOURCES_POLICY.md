@@ -16,14 +16,12 @@ QCHI-R knowledge should come from both:
 ## Source Priority
 1. arXiv and primary papers
 2. authoritative textbooks/monographs
-3. review articles and lecture notes
-4. trusted reference docs
+3. review articles
 
 ## Knowledge Ingestion Requirements
 For each new source, record:
 - title, author, edition/year
 - source URL/path
-- license/access basis
 - topic tags
 - confidence/use scope
 
