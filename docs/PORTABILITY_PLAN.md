@@ -10,7 +10,9 @@ Contains:
 - output template
 - quality gate checklist
 - citation/provenance rules
+- learning-loop and reliability policy
 
+Note: core skill is methodology-only (no non-physics scripting dependency).
 ## Host adapters
 - `adapters/openclaw.md`
 - `adapters/antigravity.md`
