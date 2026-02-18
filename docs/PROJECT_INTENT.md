@@ -19,7 +19,8 @@ A rigor-first workflow system that helps run real research tasks end-to-end:
 1. Analytical-first reasoning when feasible.
 2. Explicit assumptions + validity regime.
 3. Mandatory checks: units, limits, asymptotics, consistency.
-4. Numerical verification where applicable.
+4. Symbolic verification for analytical claims (Mathematica preferred; SymPy fallback).
+5. Numerical verification where applicable.
 5. arXiv-first source discipline.
 6. Claim provenance tags:
    - REPRODUCED_FROM_SOURCE

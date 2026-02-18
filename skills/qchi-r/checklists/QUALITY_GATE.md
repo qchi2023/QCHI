@@ -9,6 +9,7 @@ All items must pass:
 - [ ] Limiting-case check passed
 - [ ] Asymptotic check passed
 - [ ] Consistency check passed
+- [ ] Symbolic verification completed for analytical claims (Mathematica preferred; fallback recorded)
 - [ ] Claim tags present
 - [ ] References present
 - [ ] Multi-path verification done for high-impact claims (or explicitly deferred)

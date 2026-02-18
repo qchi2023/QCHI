@@ -24,6 +24,7 @@ Use: `templates/OUTPUT_TEMPLATE.md`.
 - Analytical-first when feasible.
 - No fabricated formulas/citations.
 - Must run: units, limiting-case, asymptotic, and consistency checks.
+- For analytical claims, run symbolic verification (Mathematica preferred, SymPy fallback) per `references/SYMBOLIC_VERIFICATION_POLICY.md`.
 - Tag key claims as REPRODUCED_FROM_SOURCE / INFERRED_ASSUMPTION / NEW_EXTENSION.
 - If uncertain, disclose uncertainty + verification plan.
 - Continuous learning loop is required after meaningful work:
