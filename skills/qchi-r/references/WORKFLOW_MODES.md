@@ -25,3 +25,8 @@ Then execute staged reproduction with provenance tags.
 - promote only validated claims
 - keep evidence linkage
 - keep LyX track separation
+
+## 5) Multi-agent orchestration mode
+- assign planner/deriver/verifier/referee/integrator roles
+- exchange structured handoff payloads
+- enforce gate policy before final promotion

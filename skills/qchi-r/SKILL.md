@@ -38,6 +38,7 @@ Use: `templates/OUTPUT_TEMPLATE.md`.
 - Paper reproduction mode
 - Parameter-space/plot mode
 - Publishable draft mode
+- Multi-agent orchestration mode
 
 See `references/WORKFLOW_MODES.md` and `references/PAPER_REPRO_FLOW.md`.
 For reliability and verification enforcement, also use:
@@ -46,7 +47,10 @@ For reliability and verification enforcement, also use:
 - `references/COST_RELIABILITY_POLICY.md`
 - `references/KNOWLEDGE_SOURCES_POLICY.md`
 - `references/KNOWLEDGE_ACQUISITION_WORKFLOW.md`
-- `references/NOTEBOOKLM_INTEGRATION.md`.
+- `references/NOTEBOOKLM_INTEGRATION.md`
+- `references/MULTI_AGENT_ORCHESTRATION.md`
+- `references/AGENT_MESSAGE_SCHEMA.yaml`
+- `references/ROLE_TEMPLATES.md`.
 
 ## Quality gate
 Before finalizing, pass all checks in `checklists/QUALITY_GATE.md`.
