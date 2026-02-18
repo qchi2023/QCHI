@@ -50,7 +50,17 @@ For reliability and verification enforcement, also use:
 - `references/NOTEBOOKLM_INTEGRATION.md`
 - `references/MULTI_AGENT_ORCHESTRATION.md`
 - `references/AGENT_MESSAGE_SCHEMA.yaml`
-- `references/ROLE_TEMPLATES.md`.
+- `references/ROLE_TEMPLATES.md`
+- `references/EQUATION_PROVENANCE_LEDGER.md`
+- `references/ASSUMPTION_DEBT_TRACKER.md`
+- `references/REPRO_MANIFEST_SCHEMA.md`
+- `references/REFEREE_RUBRIC.md`
+- `references/DOMAIN_PLAYBOOK_OQS.md`
+- `references/DOMAIN_PLAYBOOK_MBCM.md`
+- `references/DOMAIN_PLAYBOOK_QI.md`
+- `references/NOTEBOOKLM_SOURCE_MAPPING.md`
+- `references/PROMOTION_GATES.md`
+- `references/REGRESSION_SUITE.md`.
 
 ## Quality gate
 Before finalizing, pass all checks in `checklists/QUALITY_GATE.md`.
