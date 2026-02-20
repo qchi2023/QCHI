@@ -52,6 +52,7 @@ flowchart TD
 ## Quick map
 - Core skill: `skills/qchi-r/SKILL.md`
 - Learning store: `skills/qchi-r/learning/`
+- Project learning layout: `skills/qchi-r/references/LEARNING_PROJECT_LAYOUT.md`
 - Rigor policies: `skills/qchi-r/references/`
 - Quality gate: `skills/qchi-r/checklists/QUALITY_GATE.md`
 - Rust lint scaffold: `tools/qchi-lint/`

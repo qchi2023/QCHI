@@ -22,3 +22,6 @@ jobs:
           cargo run --manifest-path tools/qchi-lint/Cargo.toml -- jsonl --kind runs --file skills/qchi-r/learning/runs.jsonl
           cargo run --manifest-path tools/qchi-lint/Cargo.toml -- jsonl --kind evals --file skills/qchi-r/learning/evals.jsonl
           cargo run --manifest-path tools/qchi-lint/Cargo.toml -- jsonl --kind regressions --file skills/qchi-r/learning/regressions.jsonl
+
+      - name: Validate project learning layout
+        run: python3 tools/validate_project_learning.py

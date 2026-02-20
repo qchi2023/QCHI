@@ -84,6 +84,12 @@ Learning store (machine-first):
 - `learning/regressions.jsonl`
 - `learning/heuristics.yaml`
 - `learning/README.md`
+- project-scoped layout: `references/LEARNING_PROJECT_LAYOUT.md`
+
+Learning tracks required in each project:
+1. physics
+2. writing
+3. coding-plotting
 
 See:
 - `references/LEARNING_LOOP_PROTOCOL.md`
