@@ -2,6 +2,13 @@
 
 Use these commands on a fresh machine.
 
+Quick helper
+```bash
+bash scripts/host_help.sh all
+bash scripts/host_help.sh codex
+bash scripts/host_help.sh openclaw
+```
+
 ## 1) Clone and bootstrap
 ```bash
 git clone git@github.com:qchi2023/QCHI.git
