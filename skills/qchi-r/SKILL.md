@@ -63,7 +63,9 @@ For reliability and verification enforcement, also use:
 - `references/PROMOTION_GATES.md`
 - `references/REGRESSION_SUITE.md`
 - `references/UNFINISHED_PROJECT_MODE.md`
-- `references/ADAPTER_CONTRACT.md`.
+- `references/ADAPTER_CONTRACT.md`
+- `references/LYX_DIRECT_AUTHORING_PROTOCOL.md`
+- `references/LYX_DOCS_INDEX.md`.
 
 ## Quality gate
 Before finalizing, pass all checks in `checklists/QUALITY_GATE.md`.
