@@ -37,6 +37,12 @@ Host runtime (choose one)
   - "reproduce arXiv:XXXX.XXXXX"
   - "run parameter-space analysis for ..."
 
+## Quick bootstrap for Ubuntu + OpenCode
+
+```bash
+bash scripts/bootstrap_opencode_ubuntu.sh
+```
+
 ## B) Generic host use (Codex, Claude Code, Cursor, Antigravity)
 
 1. Use canonical instructions from
