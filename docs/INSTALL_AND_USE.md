@@ -2,17 +2,33 @@
 
 This repo contains a portable skill core at `skills/qchi/`.
 
+## Required programs
+
+Minimum
+- `git`
+- `python3` (for validators and utility scripts)
+
+Recommended
+- `rust` + `cargo` (to build `tools/qchi-lint`)
+- `LyX` (for direct `.lyx` authoring workflow)
+
+Host runtime (choose one)
+- OpenClaw
+- Codex
+- Claude Code
+- Cursor
+- Antigravity
+- OpenCode
+
 ## A) OpenClaw install
 
-1. Build package
-```bash
-# from repo root
-python3 scripts/package_skill.py skills/qchi dist
-```
+1. Package status
+- This repo currently has prebuilt skill artifacts under `dist/`
+- Canonical source is `skills/qchi/`
+- If you need a fresh `.skill` artifact, use your OpenClaw packaging workflow/tooling on `skills/qchi/`
 
 2. Install in OpenClaw
-- Copy `dist/qchi.skill` to the target machine
-- Import/install it in your OpenClaw skill manager
+- Import a `.skill` artifact in OpenClaw, or install from the `skills/qchi/` source according to your OpenClaw setup
 
 3. Use
 - Ask tasks that match the skill scope, for example
