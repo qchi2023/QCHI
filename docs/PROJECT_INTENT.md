@@ -21,21 +21,21 @@ A rigor-first workflow system that helps run real research tasks end-to-end:
 3. Mandatory checks: units, limits, asymptotics, consistency.
 4. Symbolic verification for analytical claims (Mathematica preferred; SymPy fallback).
 5. Numerical verification where applicable.
-5. arXiv-first source discipline.
-6. Claim provenance tags:
+6. arXiv-first source discipline.
+7. Claim provenance tags:
    - REPRODUCED_FROM_SOURCE
    - INFERRED_ASSUMPTION
    - NEW_EXTENSION
-7. Continuous learning loop is mandatory:
+8. Continuous learning loop is mandatory:
    - log failures
    - extract heuristics
    - run evals
    - run repeated-run stability checks
    - update behavior only when eval deltas and reliability metrics confirm improvement
-8. Reliability target is "cannot-play-incorrectly" (high repeated-run consistency), not one-off correctness.
-9. Knowledge expansion should include textbook/monograph ingestion (not only loop-learned heuristics).
-10. Acquisition workflow: skill collects freely accessible sources directly and queues paywalled sources for user-provided files.
-11. Multi-agent orchestration is supported via role protocols and structured inter-agent handoffs.
+9. Reliability target is "cannot-play-incorrectly" (high repeated-run consistency), not one-off correctness.
+10. Knowledge expansion should include textbook/monograph ingestion (not only loop-learned heuristics).
+11. Acquisition workflow: skill collects freely accessible sources directly and queues paywalled sources for user-provided files.
+12. Multi-agent orchestration is supported via role protocols and structured inter-agent handoffs.
 
 ## Artifact tracks (LyX-first)
 - `notes.lyx`
