@@ -40,6 +40,10 @@ Goal
 - zero dangling references
 - no colon in `.lyx` output unless explicit override
 
+## Local lint tool
+- run `python3 tools/qchi_lyx_lint.py --root .`
+- this checks forbidden colon, dangling refs, and hardcoded numbering patterns
+
 ## Source grounding
 Use these local documents first
 - `references/lyx-docs/Tutorial.pdf`

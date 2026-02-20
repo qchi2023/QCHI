@@ -28,3 +28,6 @@ jobs:
 
       - name: Validate benchmark suite file
         run: python3 tools/run_benchmarks.py
+
+      - name: Lint LyX files
+        run: python3 tools/qchi_lyx_lint.py --root .
