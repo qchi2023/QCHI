@@ -3,9 +3,9 @@
 Use project-scoped learning stores.
 
 ## Structure
-- `skills/qchi-r/learning/projects/<project-id>/physics/`
-- `skills/qchi-r/learning/projects/<project-id>/writing/`
-- `skills/qchi-r/learning/projects/<project-id>/coding-plotting/`
+- `skills/qchi/learning/projects/<project-id>/physics/`
+- `skills/qchi/learning/projects/<project-id>/writing/`
+- `skills/qchi/learning/projects/<project-id>/coding-plotting/`
 
 Each track directory should contain
 - `runs.jsonl`

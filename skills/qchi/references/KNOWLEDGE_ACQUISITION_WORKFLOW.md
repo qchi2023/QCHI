@@ -1,7 +1,7 @@
 # Knowledge Acquisition Workflow
 
 ## Objective
-Continuously expand QCHI-R knowledge sources with minimal user friction.
+Continuously expand QCHI knowledge sources with minimal user friction.
 
 ## Source collection behavior
 1. Skill/agent actively searches for high-value sources in target domains.

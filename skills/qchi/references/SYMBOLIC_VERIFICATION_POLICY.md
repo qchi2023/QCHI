@@ -7,7 +7,7 @@ For analytical physics work, symbolic verification is mandatory when feasible.
 2. SymPy (fallback)
 
 ## Required flow
-1. Produce analytical derivation in QCHI-R format.
+1. Produce analytical derivation in QCHI format.
 2. Verify key symbolic steps/identities with Mathematica when available.
 3. If Mathematica unavailable, use SymPy and mark verifier used.
 4. For numerically relevant claims, run Python/Julia cross-checks.

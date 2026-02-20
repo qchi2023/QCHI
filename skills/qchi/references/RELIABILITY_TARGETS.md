@@ -1,6 +1,6 @@
 # Reliability Targets
 
-QCHI-R target is not "correct once"; it is "hard to get wrong."
+QCHI target is not "correct once"; it is "hard to get wrong."
 
 ## Core KPI
 - **Cannot-Play-Incorrectly Score (CPIS)**

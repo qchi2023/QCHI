@@ -17,10 +17,10 @@ cargo build --release
 ## Usage
 ```bash
 # report structure
-cargo run -- report --file ../../skills/qchi-r/templates/OUTPUT_TEMPLATE.md
+cargo run -- report --file ../../skills/qchi/templates/OUTPUT_TEMPLATE.md
 
 # learning logs
-cargo run -- jsonl --kind runs --file ../../skills/qchi-r/learning/runs.jsonl
-cargo run -- jsonl --kind evals --file ../../skills/qchi-r/learning/evals.jsonl
-cargo run -- jsonl --kind regressions --file ../../skills/qchi-r/learning/regressions.jsonl
+cargo run -- jsonl --kind runs --file ../../skills/qchi/learning/runs.jsonl
+cargo run -- jsonl --kind evals --file ../../skills/qchi/learning/evals.jsonl
+cargo run -- jsonl --kind regressions --file ../../skills/qchi/learning/regressions.jsonl
 ```

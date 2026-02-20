@@ -13,9 +13,9 @@ Build one reusable system that works across hosts (OpenClaw, Antigravity, Cursor
 - `docs/INSTALL_AND_USE.md` (how to install and run)
 
 ## Portable skill package
-- `skills/qchi-r/`
-- OpenClaw package output: `dist/qchi-r.skill`
-- Generic package output: `dist/qchi-r-portable.zip`
+- `skills/qchi/`
+- OpenClaw package output: `dist/qchi.skill`
+- Generic package output: `dist/qchi-portable.zip`
 
 ## End-to-end flow (v1)
 
@@ -58,10 +58,10 @@ flowchart TD
 ```
 
 ## Quick map
-- Core skill: `skills/qchi-r/SKILL.md`
-- Learning store: `skills/qchi-r/learning/`
-- Project learning layout: `skills/qchi-r/references/LEARNING_PROJECT_LAYOUT.md`
-- Rigor policies: `skills/qchi-r/references/`
-- Quality gate: `skills/qchi-r/checklists/QUALITY_GATE.md`
+- Core skill: `skills/qchi/SKILL.md`
+- Learning store: `skills/qchi/learning/`
+- Project learning layout: `skills/qchi/references/LEARNING_PROJECT_LAYOUT.md`
+- Rigor policies: `skills/qchi/references/`
+- Quality gate: `skills/qchi/checklists/QUALITY_GATE.md`
 - Rust lint scaffold: `tools/qchi-lint/`
 - CI workflow: `.github/workflows/qchi-lint.yml`

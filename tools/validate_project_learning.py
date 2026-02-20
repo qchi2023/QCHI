@@ -9,7 +9,7 @@ REQUIRED = ["runs.jsonl", "evals.jsonl", "regressions.jsonl", "heuristics.yaml"]
 
 def main() -> int:
     p = argparse.ArgumentParser()
-    p.add_argument("--root", default="skills/qchi-r/learning/projects")
+    p.add_argument("--root", default="skills/qchi/learning/projects")
     args = p.parse_args()
 
     root = Path(args.root)

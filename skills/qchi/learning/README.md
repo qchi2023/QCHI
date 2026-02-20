@@ -1,4 +1,4 @@
-# QCHI-R Learning Store
+# QCHI Learning Store
 
 Machine-first persistence for continuous learning.
 

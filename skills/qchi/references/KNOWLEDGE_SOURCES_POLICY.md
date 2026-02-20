@@ -1,6 +1,6 @@
 # Knowledge Sources Policy
 
-QCHI-R knowledge should come from both:
+QCHI knowledge should come from both:
 1. Continuous learning loop (failures/heuristics/evals)
 2. Curated external sources (including books)
 

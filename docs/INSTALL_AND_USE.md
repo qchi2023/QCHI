@@ -1,17 +1,17 @@
-# Install and Use QCHI-R
+# Install and Use QCHI
 
-This repo contains a portable skill core at `skills/qchi-r/`.
+This repo contains a portable skill core at `skills/qchi/`.
 
 ## A) OpenClaw install
 
 1. Build package
 ```bash
 # from repo root
-python3 scripts/package_skill.py skills/qchi-r dist
+python3 scripts/package_skill.py skills/qchi dist
 ```
 
 2. Install in OpenClaw
-- Copy `dist/qchi-r.skill` to the target machine
+- Copy `dist/qchi.skill` to the target machine
 - Import/install it in your OpenClaw skill manager
 
 3. Use
@@ -23,19 +23,19 @@ python3 scripts/package_skill.py skills/qchi-r dist
 ## B) Generic host use (Codex, Claude Code, Cursor, Antigravity)
 
 1. Use canonical instructions from
-- `skills/qchi-r/SKILL.md`
-- `skills/qchi-r/references/`
+- `skills/qchi/SKILL.md`
+- `skills/qchi/references/`
 
 2. Apply host adapter notes from
-- `skills/qchi-r/adapters/openclaw.md`
-- `skills/qchi-r/adapters/cursor.md`
-- `skills/qchi-r/adapters/antigravity.md`
-- `skills/qchi-r/adapters/opencode.md`
-- `skills/qchi-r/adapters/generic.md`
+- `skills/qchi/adapters/openclaw.md`
+- `skills/qchi/adapters/cursor.md`
+- `skills/qchi/adapters/antigravity.md`
+- `skills/qchi/adapters/opencode.md`
+- `skills/qchi/adapters/generic.md`
 
 3. Keep learning logs in
-- `skills/qchi-r/learning/`
-- `skills/qchi-r/learning/projects/<project-id>/...`
+- `skills/qchi/learning/`
+- `skills/qchi/learning/projects/<project-id>/...`
 
 ## C) Expected behavior defaults
 - Full serious mode by default

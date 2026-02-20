@@ -1,7 +1,7 @@
 # Multi-Agent Orchestration Protocol
 
 ## Objective
-Enable QCHI-R workflows to decompose hard physics tasks across specialized agents and merge results with strict verification gates.
+Enable QCHI workflows to decompose hard physics tasks across specialized agents and merge results with strict verification gates.
 
 ## Agent roles
 1. Planner Agent

@@ -14,10 +14,10 @@ This is the highest-priority long-term behavior for QCHI.
 
 ## Required artifacts
 Machine-first store
-- `skills/qchi-r/learning/runs.jsonl`
-- `skills/qchi-r/learning/evals.jsonl`
-- `skills/qchi-r/learning/regressions.jsonl`
-- `skills/qchi-r/learning/heuristics.yaml`
+- `skills/qchi/learning/runs.jsonl`
+- `skills/qchi/learning/evals.jsonl`
+- `skills/qchi/learning/regressions.jsonl`
+- `skills/qchi/learning/heuristics.yaml`
 
 Optional human summaries
 - `failure_patterns.md`

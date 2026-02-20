@@ -10,7 +10,7 @@
 - [ ] Add optional local dashboard for eval trends
 
 ## Done
-- [x] Consolidated on canonical `qchi-r` skill
+- [x] Consolidated on canonical `qchi` skill
 - [x] Removed duplicate `qchi-top-layer` skill variant
 - [x] Hardened knowledge source policy and license/access gates
 - [x] Enforced LyX writing rules including no `:` default

@@ -1,6 +1,6 @@
 # Regression Suite Definition
 
-Run this suite after any QCHI-R update.
+Run this suite after any QCHI update.
 
 ## Baseline v1 cases
 1. `oqs-lindblad-trace-preservation`
@@ -9,8 +9,8 @@ Run this suite after any QCHI-R update.
 4. `paper-repro-mini-arxiv`
 
 ## Required logging
-- Write per-case outcomes to `skills/qchi-r/learning/evals.jsonl`
-- Write suite decision to `skills/qchi-r/learning/regressions.jsonl`
+- Write per-case outcomes to `skills/qchi/learning/evals.jsonl`
+- Write suite decision to `skills/qchi/learning/regressions.jsonl`
 
 ## Pass criteria
 - no quality-gate failures
