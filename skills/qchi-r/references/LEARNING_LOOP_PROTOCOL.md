@@ -13,9 +13,14 @@ This is the highest-priority long-term behavior for QCHI.
 8. Log what changed and why.
 
 ## Required artifacts
+Machine-first store
+- `skills/qchi-r/learning/runs.jsonl`
+- `skills/qchi-r/learning/evals.jsonl`
+- `skills/qchi-r/learning/regressions.jsonl`
+- `skills/qchi-r/learning/heuristics.yaml`
+
+Optional human summaries
 - `failure_patterns.md`
-- `heuristics.md`
-- `evals.md`
 - `change_log.md`
 
 ## Guardrails

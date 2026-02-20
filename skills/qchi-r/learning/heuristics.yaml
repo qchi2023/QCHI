@@ -1,0 +1,20 @@
+version: 1
+last_updated: 2026-02-20T19:20:00Z
+heuristics: []
+
+# Example entry
+# - id: H-OQS-0001
+#   title: "Lindblad trace-preservation pre-check"
+#   domain: OQS
+#   status: candidate   # candidate|promoted|rejected|deprecated
+#   trigger: "Any master-equation derivation in Lindblad form"
+#   rule: "Verify Tr[rho(t)] invariance before downstream claims"
+#   evidence:
+#     eval_suite: baseline-v1
+#     before_score: 0.84
+#     after_score: 0.93
+#     repeated_runs: 10
+#     cpis: 0.91
+#   introduced_in: abc1234
+#   promoted_in: null
+#   notes: "Promote only after non-regression on QI cases"

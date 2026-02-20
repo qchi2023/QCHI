@@ -1,0 +1,24 @@
+name: qchi-lint
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build qchi-lint
+        run: cargo build --manifest-path tools/qchi-lint/Cargo.toml --release
+
+      - name: Lint learning JSONL
+        run: |
+          cargo run --manifest-path tools/qchi-lint/Cargo.toml -- jsonl --kind runs --file skills/qchi-r/learning/runs.jsonl
+          cargo run --manifest-path tools/qchi-lint/Cargo.toml -- jsonl --kind evals --file skills/qchi-r/learning/evals.jsonl
+          cargo run --manifest-path tools/qchi-lint/Cargo.toml -- jsonl --kind regressions --file skills/qchi-r/learning/regressions.jsonl

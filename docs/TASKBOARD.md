@@ -1,16 +1,20 @@
 # TASKBOARD
 
 ## In Progress
-- [ ] Draft canonical top-layer spec (`docs/TOP_LAYER_PORTABLE_SPEC.md`)
-- [ ] Draft portable workflow (`docs/WORKFLOW_PORTABLE.md`)
-- [ ] Draft prompt contract templates (`templates/`)
-- [ ] Add validation checklist (`checklists/QUALITY_GATE.md`)
+- [ ] Run first full regression sweep on real paper set provided by user
+- [ ] Tune CPIS thresholds after baseline results
 
 ## Next
-- [ ] Add paper reproduction portable protocol
-- [ ] Add LyX artifact policy for portable use
-- [ ] Add citation/provenance schema
-- [ ] Add export path to OpenClaw skill package
+- [ ] Add richer adapter compliance test corpus
+- [ ] Add auto-generated release notes from learning logs
+- [ ] Add optional local dashboard for eval trends
 
 ## Done
-- [x] Initialize new standalone git repo and directory structure
+- [x] Consolidated on canonical `qchi-r` skill
+- [x] Removed duplicate `qchi-top-layer` skill variant
+- [x] Hardened knowledge source policy and license/access gates
+- [x] Enforced LyX writing rules including no `:` default
+- [x] Added mandatory label + `\ref` guidance for LyX artifacts
+- [x] Added machine-first learning store (`learning/*.jsonl`, `heuristics.yaml`)
+- [x] Added Rust `qchi-lint` scaffold and CI workflow
+- [x] Added adapter contract reference

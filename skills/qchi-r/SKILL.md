@@ -62,23 +62,32 @@ For reliability and verification enforcement, also use:
 - `references/NOTEBOOKLM_SOURCE_MAPPING.md`
 - `references/PROMOTION_GATES.md`
 - `references/REGRESSION_SUITE.md`
-- `references/UNFINISHED_PROJECT_MODE.md`.
+- `references/UNFINISHED_PROJECT_MODE.md`
+- `references/ADAPTER_CONTRACT.md`.
 
 ## Quality gate
 Before finalizing, pass all checks in `checklists/QUALITY_GATE.md`.
 
 ## Continuous learning loop operations
 After meaningful work:
-1. Record failure patterns.
-2. Promote validated heuristics.
+1. Record run and failures in machine logs.
+2. Promote validated heuristics only after regression pass.
 3. Run evals (including repeated-run reliability checks).
 4. Track cost vs reliability.
 5. Keep/revert behavior change based on eval + stability + CPIS criteria.
+
+Learning store (machine-first):
+- `learning/runs.jsonl`
+- `learning/evals.jsonl`
+- `learning/regressions.jsonl`
+- `learning/heuristics.yaml`
+- `learning/README.md`
 
 See:
 - `references/LEARNING_LOOP_PROTOCOL.md`
 - `references/RELIABILITY_TARGETS.md`
 - `references/COST_RELIABILITY_POLICY.md`
+- `references/REGRESSION_SUITE.md`
 
 ## Knowledge acquisition operations
 For knowledge source growth:
