@@ -1,0 +1,76 @@
+{
+  "suite": "baseline-v1",
+  "version": 1,
+  "cases": [
+    {
+      "case_id": "oqs-lindblad-trace-preservation",
+      "domain": "physics",
+      "mode": "paper_reproduction",
+      "target": "master-equation trace-preservation derivation",
+      "required_checks": ["units", "limits", "asymptotics", "consistency", "symbolic_or_justified_defer"]
+    },
+    {
+      "case_id": "oqs-complete-positivity-sanity",
+      "domain": "physics",
+      "mode": "physics_solve",
+      "target": "Lindblad generator CP sanity conditions",
+      "required_checks": ["limits", "consistency"]
+    },
+    {
+      "case_id": "mbcm-phase-sensitivity-sweep",
+      "domain": "coding-plotting",
+      "mode": "parameter_space",
+      "target": "phase sensitivity sweep",
+      "required_checks": ["consistency", "numeric"]
+    },
+    {
+      "case_id": "mbcm-noise-robustness-scan",
+      "domain": "coding-plotting",
+      "mode": "parameter_space",
+      "target": "noise robustness scan",
+      "required_checks": ["consistency", "numeric"]
+    },
+    {
+      "case_id": "qi-channel-capacity-sanity",
+      "domain": "physics",
+      "mode": "physics_solve",
+      "target": "channel metric sanity and bounds",
+      "required_checks": ["limits", "consistency"]
+    },
+    {
+      "case_id": "qi-entropy-bound-check",
+      "domain": "physics",
+      "mode": "physics_solve",
+      "target": "entropy inequality bound check",
+      "required_checks": ["limits", "consistency"]
+    },
+    {
+      "case_id": "paper-repro-mini-arxiv",
+      "domain": "physics",
+      "mode": "paper_reproduction",
+      "target": "mini reproduction with one equation and one figure",
+      "required_checks": ["units", "limits", "consistency", "provenance"]
+    },
+    {
+      "case_id": "writing-technical-clarity-pass",
+      "domain": "writing",
+      "mode": "paper_reproduction",
+      "target": "structured explanation with explicit assumptions",
+      "required_checks": ["clarity", "provenance"]
+    },
+    {
+      "case_id": "writing-ref-integrity-pass",
+      "domain": "writing",
+      "mode": "paper_reproduction",
+      "target": "internal reference integrity and no hardcoded numbering",
+      "required_checks": ["refs", "provenance"]
+    },
+    {
+      "case_id": "cross-domain-regression-guard",
+      "domain": "physics",
+      "mode": "unfinished_project",
+      "target": "new heuristic does not degrade unrelated baseline",
+      "required_checks": ["regression_guard"]
+    }
+  ]
+}
