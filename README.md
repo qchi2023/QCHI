@@ -15,9 +15,9 @@ Build one reusable system that works across hosts (OpenClaw, Antigravity, Cursor
 - `docs/HOST_COMMANDS.md` (host-by-host command quickstart)
 
 ## Portable skill package
-- `skills/qchi/`
-- OpenClaw package output: `dist/qchi.skill`
-- Generic package output: `dist/qchi-portable.zip`
+- Source of truth: `skills/qchi/`
+- Dist artifacts are generated snapshots under `dist/` (names may vary by build history)
+- Rebuild/export artifacts from current `skills/qchi/` before release
 
 ## End-to-end flow (v1)
 

@@ -66,4 +66,12 @@ cargo build --manifest-path tools/qchi-lint/Cargo.toml --release
 cargo run --manifest-path tools/qchi-lint/Cargo.toml -- jsonl --kind runs --file skills/qchi/learning/runs.jsonl
 cargo run --manifest-path tools/qchi-lint/Cargo.toml -- jsonl --kind evals --file skills/qchi/learning/evals.jsonl
 cargo run --manifest-path tools/qchi-lint/Cargo.toml -- jsonl --kind regressions --file skills/qchi/learning/regressions.jsonl
+python3 tools/run_benchmarks.py
+python3 tools/qchi_lyx_lint.py --root .
 ```
+
+## 6) Local learning dashboard
+```bash
+bash scripts/run_learning_dashboard.sh
+```
+Open `http://127.0.0.1:8787/dashboard/`

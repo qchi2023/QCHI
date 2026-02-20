@@ -72,3 +72,12 @@ See `docs/HOST_COMMANDS.md` for host-by-host quick commands.
 - CI workflow: `.github/workflows/qchi-lint.yml`
 - Rust lint scaffold: `tools/qchi-lint/`
 - Project-learning layout validator: `tools/validate_project_learning.py`
+- Benchmark suite validator: `tools/run_benchmarks.py`
+- LyX lint engine: `tools/qchi_lyx_lint.py`
+
+## E) Learning visibility
+Local dashboard
+```bash
+bash scripts/run_learning_dashboard.sh
+```
+Then open `http://127.0.0.1:8787/dashboard/`
