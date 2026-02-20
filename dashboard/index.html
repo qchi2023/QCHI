@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>QCHI Learning Dashboard</title>
+  <style>body{font-family:Arial, sans-serif;max-width:1000px;margin:24px auto;padding:0 12px} pre{background:#f6f8fa;padding:10px;overflow:auto} .card{border:1px solid #ddd;border-radius:8px;padding:12px;margin:12px 0}</style>
+</head>
+<body>
+  <h1>QCHI Learning Dashboard</h1>
+  <p id="meta"></p>
+  <div id="global" class="card"></div>
+  <div id="projects"></div>
+<script>
+fetch('learning_data.json').then(r=>r.json()).then(d=>{
+  document.getElementById('meta').textContent = 'Generated ' + d.generated_at;
+  const g=d.global;
+  document.getElementById('global').innerHTML = `<h2>Global</h2>
+  <p>Runs: ${g.runs.length} | Evals: ${g.evals.length} | Regressions: ${g.regressions.length}</p>
+  <details><summary>Heuristics YAML</summary><pre>${(g.heuristics_yaml||'').replace(/</g,'&lt;')}</pre></details>`;
+
+  const pDiv=document.getElementById('projects');
+  const names=Object.keys(d.projects||{});
+  if(!names.length){pDiv.innerHTML='<p>No project learning data yet.</p>'; return;}
+  names.forEach(name=>{
+    const tracks=d.projects[name];
+    let html=`<div class='card'><h2>Project: ${name}</h2>`;
+    ['physics','writing','coding-plotting'].forEach(t=>{
+      const x=tracks[t]||{runs:[],evals:[],regressions:[],heuristics_yaml:''};
+      html += `<h3>${t}</h3><p>Runs: ${x.runs.length} | Evals: ${x.evals.length} | Regressions: ${x.regressions.length}</p>
+      <details><summary>${t} heuristics.yaml</summary><pre>${(x.heuristics_yaml||'').replace(/</g,'&lt;')}</pre></details>`;
+    });
+    html += '</div>';
+    pDiv.insertAdjacentHTML('beforeend', html);
+  });
+});
+</script>
+</body>
+</html>

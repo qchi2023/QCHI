@@ -1,0 +1,31 @@
+{
+  "generated_at": "2026-02-20T20:54:51.738072Z",
+  "global": {
+    "runs": [],
+    "evals": [],
+    "regressions": [],
+    "heuristics_yaml": "version: 1\nlast_updated: 2026-02-20T19:20:00Z\nheuristics: []\n\n# Example entry\n# - id: H-OQS-0001\n#   title: \"Lindblad trace-preservation pre-check\"\n#   domain: OQS\n#   status: candidate   # candidate|promoted|rejected|deprecated\n#   trigger: \"Any master-equation derivation in Lindblad form\"\n#   rule: \"Verify Tr[rho(t)] invariance before downstream claims\"\n#   evidence:\n#     eval_suite: baseline-v1\n#     before_score: 0.84\n#     after_score: 0.93\n#     repeated_runs: 10\n#     cpis: 0.91\n#   introduced_in: abc1234\n#   promoted_in: null\n#   notes: \"Promote only after non-regression on QI cases\"\n"
+  },
+  "projects": {
+    "TEMPLATE": {
+      "physics": {
+        "runs": [],
+        "evals": [],
+        "regressions": [],
+        "heuristics_yaml": "version: 1\nlast_updated: null\nheuristics: []\n"
+      },
+      "writing": {
+        "runs": [],
+        "evals": [],
+        "regressions": [],
+        "heuristics_yaml": "version: 1\nlast_updated: null\nheuristics: []\n"
+      },
+      "coding-plotting": {
+        "runs": [],
+        "evals": [],
+        "regressions": [],
+        "heuristics_yaml": "version: 1\nlast_updated: null\nheuristics: []\n"
+      }
+    }
+  }
+}
