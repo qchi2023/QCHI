@@ -30,15 +30,17 @@ flowchart TD
     H -->|pass| I[Log learning artifacts]
     H -->|fail| C
 
-    I --> I1[runs.jsonl]
-    I --> I2[evals.jsonl]
-    I --> I3[regressions.jsonl]
-    I --> I4[heuristics.yaml]
+    I --> P1[Project track physics]
+    I --> P2[Project track writing]
+    I --> P3[Project track coding-plotting]
 
-    I1 --> J[Regression suite]
+    P1 --> I1[runs.jsonl evals.jsonl regressions.jsonl heuristics.yaml]
+    P2 --> I2[runs.jsonl evals.jsonl regressions.jsonl heuristics.yaml]
+    P3 --> I3[runs.jsonl evals.jsonl regressions.jsonl heuristics.yaml]
+
+    I1 --> J[Regression suite plus promotion gates]
     I2 --> J
     I3 --> J
-    I4 --> J
 
     J -->|improves reliability| K[Promote heuristic or behavior]
     J -->|regression detected| L[Revert or keep as candidate]
@@ -46,7 +48,12 @@ flowchart TD
     K --> M[Commit and push to GitHub]
     L --> M
 
-    M --> N[Portable reuse across hosts<br/>OpenClaw Codex Claude Code Cursor Antigravity]
+    M --> R[Friend branch or PR contribution]
+    R --> S[CI gates qchi-lint plus project-learning validator]
+    S -->|pass| T[Merge to main]
+    S -->|fail| U[Fix and rerun]
+
+    T --> N[Portable reuse across hosts<br/>OpenClaw Codex Claude Code Cursor Antigravity]
 ```
 
 ## Quick map
