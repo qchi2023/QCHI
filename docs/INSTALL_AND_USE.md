@@ -3,6 +3,7 @@
 This repo contains a portable skill core at `skills/qchi/`.
 
 ## Required programs
+- See also `docs/INSTALL_PREREQS.md` for OS install commands.
 
 Minimum
 - `git`
