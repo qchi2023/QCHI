@@ -12,6 +12,7 @@ Build one reusable system that works across hosts (OpenClaw, Antigravity, Cursor
 - `docs/PORTABILITY_PLAN.md`
 - `docs/INSTALL_AND_USE.md` (how to install and run)
 - `docs/INSTALL_PREREQS.md` (program prerequisites)
+- `docs/HOST_COMMANDS.md` (host-by-host command quickstart)
 
 ## Portable skill package
 - `skills/qchi/`

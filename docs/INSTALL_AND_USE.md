@@ -43,6 +43,8 @@ Host runtime (choose one)
 bash scripts/bootstrap_opencode_ubuntu.sh
 ```
 
+See `docs/HOST_COMMANDS.md` for host-by-host quick commands.
+
 ## B) Generic host use (Codex, Claude Code, Cursor, Antigravity)
 
 1. Use canonical instructions from
