@@ -20,3 +20,4 @@ All items must pass:
 - [ ] Stability + CPIS check completed for behavior changes
 - [ ] Cost vs reliability log updated (or explicitly deferred)
 - [ ] Promotion gate level (Bronze/Silver/Gold) decided and recorded
+- [ ] For paper reproduction, multi-agent role evidence present (source-miner, derivation, verifier, referee) unless explicit single-agent override

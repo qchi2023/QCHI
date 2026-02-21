@@ -36,10 +36,15 @@ Use: `templates/OUTPUT_TEMPLATE.md`.
 ## Research modes
 - Unfinished project mode (default when user says "work on project X")
 - Physics solve mode
-- Paper reproduction mode
+- Paper reproduction mode (mandatory multi-agent by default)
 - Parameter-space/plot mode
 - Publishable draft mode
 - Multi-agent orchestration mode
+
+Paper reproduction enforcement
+- paper reproduction must use multi-agent orchestration unless user explicitly requests single-agent
+- required roles: source-miner, derivation, verifier, referee
+- if required roles are not present, stop and emit policy failure instead of continuing
 
 See `references/WORKFLOW_MODES.md` and `references/PAPER_REPRO_FLOW.md`.
 For reliability and verification enforcement, also use:
