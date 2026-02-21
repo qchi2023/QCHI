@@ -69,3 +69,4 @@ flowchart TD
 - Quality gate: `skills/qchi/checklists/QUALITY_GATE.md`
 - Rust lint scaffold: `tools/qchi-lint/`
 - CI workflow: `.github/workflows/qchi-lint.yml`
+- Conformance runner: `scripts/run_conformance.sh`

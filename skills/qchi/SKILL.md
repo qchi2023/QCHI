@@ -72,7 +72,8 @@ For reliability and verification enforcement, also use:
 - `references/LYX_DIRECT_AUTHORING_PROTOCOL.md`
 - `references/LYX_DOCS_INDEX.md`
 - `references/LYX_MINIMAL_TEMPLATE.lyx`
-- `references/PROJECT_ARTIFACT_LAYOUT.md`.
+- `references/PROJECT_ARTIFACT_LAYOUT.md`
+- `references/CONFORMANCE_LAYER.md`.
 
 ## Quality gate
 Before finalizing, pass all checks in `checklists/QUALITY_GATE.md`.

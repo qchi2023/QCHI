@@ -79,7 +79,12 @@ python3 tools/run_benchmarks.py
 python3 tools/qchi_lyx_lint.py --root .
 ```
 
-## 6) Local learning dashboard
+## 6) Conformance checks (host-agnostic)
+```bash
+bash scripts/run_conformance.sh ~/Documents/QCHI-Projects/<project-id> <project-id>
+```
+
+## 7) Local learning dashboard
 ```bash
 bash scripts/run_learning_dashboard.sh
 ```
