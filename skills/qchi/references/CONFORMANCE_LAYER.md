@@ -13,6 +13,7 @@ Under `~/Documents/QCHI-Projects/<project-id>/artifacts/reports/`:
 4. `roles/derivation.md`
 5. `roles/verifier.md`
 6. `roles/referee.md`
+7. `equation_coverage.json`
 
 ## Required artifact paths
 - `~/Documents/QCHI-Projects/<project-id>/artifacts/lyx/notes.lyx`
@@ -30,6 +31,7 @@ A run is PASS only if all conditions hold:
 - required role evidence files exist and are non-empty
 - `compliance.json` exists with status=pass and gate summary
 - `repro_manifest.json` exists with source/equation mapping entries
+- `equation_coverage.json` exists and marks all in-scope equations as derived or blocked-with-reason
 - project learning logs exist for all three tracks
 
 Any missing item -> FAIL (no success claim allowed)

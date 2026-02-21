@@ -12,12 +12,17 @@
 ## Flow
 1. Map contribution and target outputs.
 2. Build assumption inventory (explicit + inferred).
-3. Re-derive key equations with intermediate steps.
-4. Reproduce computational outputs.
-5. Regenerate and compare figures/tables.
-6. Run stress/sensitivity tests.
-7. Report mismatches and root causes.
-8. Mark optional extensions clearly.
-9. Attach reproducibility appendix (env, versions, seeds).
+3. Enumerate all in-scope equations from the paper section set.
+4. Re-derive all in-scope equations with intermediate steps.
+5. Reproduce computational outputs.
+6. Regenerate and compare figures/tables.
+7. Run stress/sensitivity tests.
+8. Report mismatches and root causes.
+9. Mark optional extensions clearly.
+10. Attach reproducibility appendix (env, versions, seeds).
+
+## Coverage rule
+- "key equations only" is not acceptable for reproduction mode.
+- every equation in scope must be listed in the manifest and marked as derived or explicitly blocked with reason.
 
 Claim tags are mandatory for major outputs.

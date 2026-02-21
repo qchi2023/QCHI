@@ -41,6 +41,7 @@ def main() -> int:
     reports = root / "artifacts" / "reports"
     compliance = reports / "compliance.json"
     repro_manifest = reports / "repro_manifest.json"
+    equation_coverage = reports / "equation_coverage.json"
 
     if not compliance.exists():
         errors.append("missing artifacts/reports/compliance.json")
@@ -62,6 +63,24 @@ def main() -> int:
             mappings = rj.get("equation_source_mappings", [])
             if not isinstance(mappings, list) or len(mappings) == 0:
                 errors.append("repro_manifest missing equation_source_mappings")
+
+    if not equation_coverage.exists():
+        errors.append("missing artifacts/reports/equation_coverage.json")
+    else:
+        ej = load_json(equation_coverage)
+        if not ej:
+            errors.append("invalid JSON in equation_coverage.json")
+        else:
+            equations = ej.get("equations", [])
+            if not isinstance(equations, list) or len(equations) == 0:
+                errors.append("equation_coverage missing equations list")
+            else:
+                for i, q in enumerate(equations, start=1):
+                    st = str(q.get("status", "")).lower()
+                    if st not in {"derived", "blocked"}:
+                        errors.append(f"equation_coverage invalid status at entry {i}")
+                    if st == "blocked" and not q.get("reason"):
+                        errors.append(f"equation_coverage blocked entry {i} missing reason")
 
     for rel in REQ_ROLE_FILES:
         p = reports / rel

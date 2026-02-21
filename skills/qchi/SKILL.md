@@ -45,6 +45,8 @@ Paper reproduction enforcement
 - paper reproduction must use multi-agent orchestration unless user explicitly requests single-agent
 - required roles: source-miner, derivation, verifier, referee
 - if required roles are not present, stop and emit policy failure instead of continuing
+- reproduction coverage must include all in-scope equations not only key equations
+- derivation must include full intermediate steps for in-scope equations not summary-only results
 
 See `references/WORKFLOW_MODES.md` and `references/PAPER_REPRO_FLOW.md`.
 For reliability and verification enforcement, also use:
