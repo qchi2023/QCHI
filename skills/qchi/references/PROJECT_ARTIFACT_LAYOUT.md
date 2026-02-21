@@ -3,24 +3,24 @@
 This defines where AI must save project outputs.
 
 ## Root
-- `projects/<project-id>/`
+- `~/Documents/QCHI-Projects/<project-id>/`
 
 ## Required subfolders
-- `projects/<project-id>/artifacts/lyx/`
-- `projects/<project-id>/artifacts/plots/`
-- `projects/<project-id>/artifacts/data/`
-- `projects/<project-id>/artifacts/reports/`
+- `~/Documents/QCHI-Projects/<project-id>/artifacts/lyx/`
+- `~/Documents/QCHI-Projects/<project-id>/artifacts/plots/`
+- `~/Documents/QCHI-Projects/<project-id>/artifacts/data/`
+- `~/Documents/QCHI-Projects/<project-id>/artifacts/reports/`
 
 ## LyX files
 Save LyX tracks here
-- `projects/<project-id>/artifacts/lyx/notes.lyx`
-- `projects/<project-id>/artifacts/lyx/systematics_plots.lyx`
-- `projects/<project-id>/artifacts/lyx/publishable_draft.lyx` (only if explicitly requested)
+- `~/Documents/QCHI-Projects/<project-id>/artifacts/lyx/notes.lyx`
+- `~/Documents/QCHI-Projects/<project-id>/artifacts/lyx/systematics_plots.lyx`
+- `~/Documents/QCHI-Projects/<project-id>/artifacts/lyx/publishable_draft.lyx` (only if explicitly requested)
 
 ## Plot and numeric outputs
-- figures: `projects/<project-id>/artifacts/plots/`
-- raw arrays/tables: `projects/<project-id>/artifacts/data/`
-- run summaries and check reports: `projects/<project-id>/artifacts/reports/`
+- figures: `~/Documents/QCHI-Projects/<project-id>/artifacts/plots/`
+- raw arrays/tables: `~/Documents/QCHI-Projects/<project-id>/artifacts/data/`
+- run summaries and check reports: `~/Documents/QCHI-Projects/<project-id>/artifacts/reports/`
 
 ## Learning linkage
 Project learning remains in
