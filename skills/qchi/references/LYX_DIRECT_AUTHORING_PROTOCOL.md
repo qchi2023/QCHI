@@ -11,6 +11,7 @@ Goal
 - do not hardcode equation or figure numbers in prose
 
 ## Safe edit order
+0. initialize files from `references/LYX_MINIMAL_TEMPLATE.lyx` (or `tools/init_lyx_artifacts.sh`)
 1. create or update section shell
 2. insert equations and symbols
 3. add labels immediately
@@ -42,7 +43,7 @@ Goal
 
 ## Local lint tool
 - run `python3 tools/qchi_lyx_lint.py --root .`
-- this checks LyX format validity plus forbidden colon, dangling refs, and hardcoded numbering patterns
+- this checks LyX format validity, malformed `\label`/`\ref`, label prefixes, forbidden colon, dangling refs, and hardcoded numbering patterns
 - reject `.lyx` files that are markdown/plain-text disguised as LyX
 
 ## Source grounding

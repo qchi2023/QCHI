@@ -71,6 +71,7 @@ For reliability and verification enforcement, also use:
 - `references/ADAPTER_CONTRACT.md`
 - `references/LYX_DIRECT_AUTHORING_PROTOCOL.md`
 - `references/LYX_DOCS_INDEX.md`
+- `references/LYX_MINIMAL_TEMPLATE.lyx`
 - `references/PROJECT_ARTIFACT_LAYOUT.md`.
 
 ## Quality gate
