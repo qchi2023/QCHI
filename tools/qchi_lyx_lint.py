@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 import argparse
 import re
+import shutil
+import subprocess
+import tempfile
 from pathlib import Path
 
 LABEL_RE = re.compile(r"\\label\{([^}]+)\}")
@@ -11,13 +14,19 @@ BAD_REF_CMD_RE = re.compile(r"\\ref(?!\{)")
 LABEL_PREFIX_RE = re.compile(r"^(sec|eq|fig|tab)-")
 
 
-def lint_file(path: Path, allow_colon: bool):
+def lint_file(path: Path, allow_colon: bool, export_check: bool):
     text = path.read_text(encoding="utf-8", errors="ignore")
     errors = []
 
     # Must look like a real LyX file, not markdown/plain text with .lyx extension
+    if not text.lstrip().startswith("#LyX"):
+        errors.append("missing '#LyX' header")
+
     if "\\lyxformat" not in text or "\\begin_document" not in text or "\\end_document" not in text:
         errors.append("file does not look like valid LyX format (missing required LyX document markers)")
+
+    if "\\begin_header" not in text or "\\end_header" not in text:
+        errors.append("missing LyX header block")
 
     if re.search(r"^#\s", text, flags=re.MULTILINE):
         errors.append("contains markdown headings; likely not a valid LyX document")
@@ -49,6 +58,23 @@ def lint_file(path: Path, allow_colon: bool):
     if not labels and ("\\ref{" in text or "Formula" in text or "begin_layout Section" in text):
         errors.append("has references/structure but no labels found")
 
+    if export_check:
+        lyx_bin = shutil.which("lyx")
+        if lyx_bin is None:
+            errors.append("lyx binary not found for export check")
+        else:
+            with tempfile.TemporaryDirectory(prefix="qchi-lyx-") as td:
+                out_tex = Path(td) / "out.tex"
+                proc = subprocess.run(
+                    [lyx_bin, "--export", "latex", str(path), "--export-to", str(out_tex)],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                    timeout=90,
+                )
+                if proc.returncode != 0 or not out_tex.exists():
+                    errors.append("LyX export check failed (cannot export to LaTeX)")
+
     return errors
 
 
@@ -56,6 +82,7 @@ def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--root", default=".")
     p.add_argument("--allow-colon", action="store_true")
+    p.add_argument("--no-export-check", action="store_true", help="skip LyX export validation")
     args = p.parse_args()
 
     root = Path(args.root)
@@ -67,7 +94,7 @@ def main() -> int:
 
     failed = 0
     for f in files:
-        errs = lint_file(f, allow_colon=args.allow_colon)
+        errs = lint_file(f, allow_colon=args.allow_colon, export_check=not args.no_export_check)
         if errs:
             failed += 1
             print(f"FAIL {f}")

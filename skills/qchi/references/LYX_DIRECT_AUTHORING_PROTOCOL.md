@@ -43,8 +43,9 @@ Goal
 
 ## Local lint tool
 - run `python3 tools/qchi_lyx_lint.py --root .`
-- this checks LyX format validity, malformed `\label`/`\ref`, label prefixes, forbidden colon, dangling refs, and hardcoded numbering patterns
+- this checks LyX format validity, malformed `\label`/`\ref`, label prefixes, forbidden colon, dangling refs, hardcoded numbering, and LyX export viability
 - reject `.lyx` files that are markdown/plain-text disguised as LyX
+- use `--no-export-check` only for emergency debugging, never for final acceptance
 
 ## Source grounding
 Use these local documents first
