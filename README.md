@@ -13,6 +13,7 @@ Build one reusable system that works across hosts (OpenClaw, Antigravity, Cursor
 - `docs/INSTALL_AND_USE.md` (how to install and run)
 - `docs/INSTALL_PREREQS.md` (program prerequisites)
 - `docs/HOST_COMMANDS.md` (host-by-host command quickstart)
+- `docs/OPENCODE_REGISTER.md` (register QCHI in OpenCode)
 
 ## Portable skill package
 - Source of truth: `skills/qchi/`

@@ -48,7 +48,16 @@ openclaw help
 openclaw gateway --help
 ```
 
-## 4) Codex / Claude Code / Cursor / VS Code / Antigravity / others
+## 4) OpenCode registration and launch
+```bash
+bash scripts/register_opencode_qchi.sh
+opencode ~/.local/share/opencode/skills/QCHI
+```
+
+Guide
+- `docs/OPENCODE_REGISTER.md`
+
+## 5) Codex / Claude Code / Cursor / VS Code / Antigravity / others
 I do not hardcode undocumented CLI commands here.
 
 Use the host's native way to set system instructions/context and point it to
