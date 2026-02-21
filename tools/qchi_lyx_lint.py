@@ -12,6 +12,13 @@ def lint_file(path: Path, allow_colon: bool):
     text = path.read_text(encoding="utf-8", errors="ignore")
     errors = []
 
+    # Must look like a real LyX file, not markdown/plain text with .lyx extension
+    if "\\lyxformat" not in text and "\\begin_document" not in text:
+        errors.append("file does not look like valid LyX format (missing \\lyxformat/\\begin_document)")
+
+    if re.search(r"^#\s", text, flags=re.MULTILINE):
+        errors.append("contains markdown headings; likely not a valid LyX document")
+
     if not allow_colon and ":" in text:
         errors.append("contains ':' but colon is disallowed by LyX policy")
 

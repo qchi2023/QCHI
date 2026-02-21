@@ -42,7 +42,8 @@ Goal
 
 ## Local lint tool
 - run `python3 tools/qchi_lyx_lint.py --root .`
-- this checks forbidden colon, dangling refs, and hardcoded numbering patterns
+- this checks LyX format validity plus forbidden colon, dangling refs, and hardcoded numbering patterns
+- reject `.lyx` files that are markdown/plain-text disguised as LyX
 
 ## Source grounding
 Use these local documents first
