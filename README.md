@@ -62,6 +62,7 @@ flowchart TD
 
 ## Quick map
 - Core skill: `skills/qchi/SKILL.md`
+- Project artifact layout: `skills/qchi/references/PROJECT_ARTIFACT_LAYOUT.md`
 - Learning store: `skills/qchi/learning/`
 - Project learning layout: `skills/qchi/references/LEARNING_PROJECT_LAYOUT.md`
 - Rigor policies: `skills/qchi/references/`

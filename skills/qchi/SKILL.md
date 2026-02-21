@@ -70,7 +70,8 @@ For reliability and verification enforcement, also use:
 - `references/UNFINISHED_PROJECT_MODE.md`
 - `references/ADAPTER_CONTRACT.md`
 - `references/LYX_DIRECT_AUTHORING_PROTOCOL.md`
-- `references/LYX_DOCS_INDEX.md`.
+- `references/LYX_DOCS_INDEX.md`
+- `references/PROJECT_ARTIFACT_LAYOUT.md`.
 
 ## Quality gate
 Before finalizing, pass all checks in `checklists/QUALITY_GATE.md`.
