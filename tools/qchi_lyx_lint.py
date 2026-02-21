@@ -33,8 +33,18 @@ def lint_file(path: Path, allow_colon: bool, export_check: bool):
     if re.search(r"^-\s", text, flags=re.MULTILINE):
         errors.append("contains markdown bullet syntax; likely not a valid LyX document")
 
-    if not allow_colon and ":" in text:
-        errors.append("contains ':' but colon is disallowed by LyX policy")
+    if not allow_colon:
+        colon_violations = []
+        for line in text.splitlines():
+            # allow mandatory LyX header line and lyx.org URL in header
+            if line.startswith("#LyX "):
+                continue
+            if "lyx.org" in line:
+                continue
+            if ":" in line:
+                colon_violations.append(line)
+        if colon_violations:
+            errors.append("contains ':' but colon is disallowed by LyX policy")
 
     if BAD_LABEL_CMD_RE.search(text):
         errors.append("malformed \\label command found (must be \\label{...})")
