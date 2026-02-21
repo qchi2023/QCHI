@@ -28,6 +28,7 @@ Under `~/Documents/QCHI-Projects/<project-id>/artifacts/reports/`:
 ## Compliance contract
 A run is PASS only if all conditions hold:
 - LyX lint passes
+- LyX export viability passes for `notes.lyx` and `systematics_plots.lyx`
 - required role evidence files exist and are non-empty
 - `compliance.json` exists with status=pass and gate summary
 - `repro_manifest.json` exists with source/equation mapping entries

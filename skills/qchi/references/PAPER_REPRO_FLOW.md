@@ -10,6 +10,7 @@
 - if role set is incomplete and user did not explicitly request single-agent, stop with policy failure
 
 ## Flow
+0. Initialize LyX artifacts from template (`tools/init_lyx_artifacts.sh <project-root>`) and verify template opens/exports.
 1. Map contribution and target outputs.
 2. Build assumption inventory (explicit + inferred).
 3. Enumerate all in-scope equations from the paper section set.

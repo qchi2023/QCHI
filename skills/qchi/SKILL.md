@@ -47,6 +47,8 @@ Paper reproduction enforcement
 - if required roles are not present, stop and emit policy failure instead of continuing
 - reproduction coverage must include all in-scope equations not only key equations
 - derivation must include full intermediate steps for in-scope equations not summary-only results
+- LyX workflow is mandatory: initialize artifact files from `skills/qchi/references/LYX_MINIMAL_TEMPLATE.lyx` (or `tools/init_lyx_artifacts.sh`) before writing content
+- if LyX export check fails, run is failed regardless of textual summary quality
 
 See `references/WORKFLOW_MODES.md` and `references/PAPER_REPRO_FLOW.md`.
 For reliability and verification enforcement, also use:
