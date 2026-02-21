@@ -19,3 +19,6 @@ This index tracks downloaded LyX documentation used to improve direct `.lyx` aut
 - use these docs as operational reference for LyX-specific behavior
 - prefer local downloaded docs for repeatable access
 - when a LyX issue appears, add a short note in learning logs with doc section reference if available
+
+## Study notes
+- `references/LYX_STUDY_NOTES.md` (distilled guidance from Tutorial/UserGuide/Math)
