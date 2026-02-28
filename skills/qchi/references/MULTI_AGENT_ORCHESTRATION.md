@@ -46,4 +46,4 @@ If any critical gate fails:
 - require re-run before acceptance.
 
 ## Host adaptation note
-Not all hosts support true sub-agents. For non-supporting hosts, simulate roles sequentially using the same protocol payload structure.
+All hosts (including Gemini CLI, Codex CLI, etc.) must utilize true sub-agents to enforce these roles. Sequential simulation in a single thread is no longer permitted; the task must be delegated to specialized sub-agents.

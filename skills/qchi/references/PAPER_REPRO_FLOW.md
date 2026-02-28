@@ -1,13 +1,13 @@
 # Paper Reproduction Flow
 
 ## Enforcement
-- default execution is multi-agent
-- required roles
+- execution must use multi-agent orchestration (subagents)
+- required roles for reproduction:
   1) source-miner
   2) derivation
   3) verifier
   4) referee
-- if role set is incomplete and user did not explicitly request single-agent, stop with policy failure
+- if role set is incomplete, stop with policy failure
 
 ## Flow
 0. Initialize LyX artifacts from template (`tools/init_lyx_artifacts.sh <project-root>`) and verify template opens/exports.

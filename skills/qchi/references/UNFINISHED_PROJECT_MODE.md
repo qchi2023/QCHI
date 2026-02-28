@@ -6,7 +6,7 @@ When user says: "work on project X" (or equivalent), enter this mode.
 ## Behavior
 - Work diligently on project X end-to-end.
 - Continue until completion gate is reached or a true blocker appears.
-- Do not overcomplicate with extra orchestration unless user asks.
+- Use full multi-agent orchestration (subagents) to decompose and verify tasks.
 
 ## Execution contract
 1. Load project context/files.

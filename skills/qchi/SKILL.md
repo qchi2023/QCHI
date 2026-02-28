@@ -34,16 +34,16 @@ Use: `templates/OUTPUT_TEMPLATE.md`.
   4) keep changes only if eval quality improves
 
 ## Research modes
+All modes require multi-agent orchestration (subagents) to execute:
 - Unfinished project mode (default when user says "work on project X")
 - Physics solve mode
-- Paper reproduction mode (mandatory multi-agent by default)
+- Paper reproduction mode
 - Parameter-space/plot mode
 - Publishable draft mode
-- Multi-agent orchestration mode
 
-Paper reproduction enforcement
-- paper reproduction must use multi-agent orchestration unless user explicitly requests single-agent
-- required roles: source-miner, derivation, verifier, referee
+Enforcement
+- execution must always use multi-agent orchestration
+- required roles: planner, derivation, verifier, referee, integrator (and source-miner for reproduction)
 - if required roles are not present, stop and emit policy failure instead of continuing
 - reproduction coverage must include all in-scope equations not only key equations
 - derivation must include full intermediate steps for in-scope equations not summary-only results

@@ -26,7 +26,4 @@ Then execute staged reproduction with provenance tags.
 - keep evidence linkage
 - keep LyX track separation
 
-## 5) Multi-agent orchestration mode
-- assign planner/deriver/verifier/referee/integrator roles
-- exchange structured handoff payloads
-- enforce gate policy before final promotion
+*(Note: Multi-agent orchestration using specialized subagents is universally required across all of the above modes.)*
