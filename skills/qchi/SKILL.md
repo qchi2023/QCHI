@@ -50,34 +50,56 @@ Enforcement
 - LyX workflow is mandatory: initialize artifact files from `skills/qchi/references/LYX_MINIMAL_TEMPLATE.lyx` (or `tools/init_lyx_artifacts.sh`) before writing content
 - if LyX export check fails, run is failed regardless of textual summary quality
 
-See `references/WORKFLOW_MODES.md` and `references/PAPER_REPRO_FLOW.md`.
-For reliability and verification enforcement, also use:
-- `references/RELIABILITY_TARGETS.md`
-- `references/MULTI_PATH_VERIFICATION.md`
-- `references/COST_RELIABILITY_POLICY.md`
-- `references/KNOWLEDGE_SOURCES_POLICY.md`
-- `references/KNOWLEDGE_ACQUISITION_WORKFLOW.md`
-- `references/NOTEBOOKLM_INTEGRATION.md`
-- `references/MULTI_AGENT_ORCHESTRATION.md`
-- `references/AGENT_MESSAGE_SCHEMA.yaml`
-- `references/ROLE_TEMPLATES.md`
-- `references/EQUATION_PROVENANCE_LEDGER.md`
-- `references/ASSUMPTION_DEBT_TRACKER.md`
-- `references/REPRO_MANIFEST_SCHEMA.md`
-- `references/REFEREE_RUBRIC.md`
-- `references/DOMAIN_PLAYBOOK_OQS.md`
-- `references/DOMAIN_PLAYBOOK_MBCM.md`
-- `references/DOMAIN_PLAYBOOK_QI.md`
-- `references/NOTEBOOKLM_SOURCE_MAPPING.md`
-- `references/PROMOTION_GATES.md`
-- `references/REGRESSION_SUITE.md`
-- `references/UNFINISHED_PROJECT_MODE.md`
-- `references/ADAPTER_CONTRACT.md`
-- `references/LYX_DIRECT_AUTHORING_PROTOCOL.md`
-- `references/LYX_DOCS_INDEX.md`
-- `references/LYX_MINIMAL_TEMPLATE.lyx`
-- `references/PROJECT_ARTIFACT_LAYOUT.md`
-- `references/CONFORMANCE_LAYER.md`.
+## LyX Direct Authoring Cheat Sheet
+Because you must write directly to `.lyx` files, you MUST use the following raw LyX markup structures. NEVER output standard Markdown or raw LaTeX blocks inside a LyX file.
+
+### 1. Standard Paragraph
+```text
+\layout Standard
+This is regular text.
+```
+
+### 2. Section Heading
+```text
+\layout Section
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Introduction"
+\end_inset
+
+Introduction Header
+```
+
+### 3. Inline Math
+```text
+\begin_inset Formula $E=mc^{2}$
+\end_inset
+```
+
+### 4. Display Equation (with Label)
+```text
+\begin_inset Formula 
+\begin{equation}
+H|\psi\rangle=E|\psi\rangle\label{eq:schrodinger}
+\end{equation}
+\end_inset
+```
+
+### 5. Cross-Reference
+```text
+As seen in Equation 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:schrodinger"
+\end_inset
+```
+
+**CRITICAL LYX RULES:**
+1. A `.lyx` file must start with `#LyX 2.4 created this file.`
+2. You must balance every `\begin_inset` with an `\end_inset`.
+3. Never use a colon (`:`) in regular text unless explicitly requested by the user.
+
+See `references/LYX_DIRECT_AUTHORING_PROTOCOL.md` and `references/LYX_MINIMAL_TEMPLATE.lyx`.
 
 ## Quality gate
 Before finalizing, pass all checks in `checklists/QUALITY_GATE.md`.
