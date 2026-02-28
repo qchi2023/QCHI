@@ -57,8 +57,20 @@ python3 bin/qchi dashboard serve --port 8787
 python3 bin/qchi version
 ```
 
+Optional installable entrypoint:
+```bash
+python3 -m pip install --no-build-isolation --no-deps -e .
+qchi version
+```
+
 By default, `qchi run` writes run artifacts to `.qchi/runs/<task_id>/` (role outputs, attempt logs, final summary).
 Set `--run-artifacts-dir <path>` or `QCHI_RUN_ARTIFACTS_DIR` to change the artifact root.
+
+By default, `qchi run` appends a learning record to `skills/qchi/learning/runs.jsonl`.
+Optional logging controls:
+- `--learning-dir <path>` for alternate learning root
+- `--project-id <project-id>` for project-scoped run logging
+- `--learning-track <physics|writing|coding-plotting>` for project track selection
 
 Legacy compatibility: `python3 bin/qchi --mode ... --task ...` is still accepted and maps to `qchi run`.
 
@@ -91,6 +103,7 @@ Legacy compatibility: `python3 bin/qchi --mode ... --task ...` is still accepted
 - Project-learning layout validator: `tools/validate_project_learning.py`
 - Benchmark suite validator: `tools/run_benchmarks.py`
 - LyX lint engine: `tools/qchi_lyx_lint.py`
+- CLI tests: `python3 -m unittest discover -s tests -p "test_*.py"`
 
 ## E) Learning visibility
 Local dashboard

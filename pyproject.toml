@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qchi-cli"
+version = "0.4.0"
+description = "QCHI CLI orchestrator"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{ name = "QCHI" }]
+dependencies = []
+
+[project.scripts]
+qchi = "qchi_cli:main"
+
+[tool.setuptools]
+py-modules = ["qchi_cli"]

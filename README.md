@@ -74,6 +74,13 @@ flowchart TD
 ## CLI quickstart
 QCHI includes an executable orchestrator at `bin/qchi`.
 
+Install optional entrypoint:
+
+```bash
+python3 -m pip install --no-build-isolation --no-deps -e .
+qchi version
+```
+
 ```bash
 python3 bin/qchi doctor --host gemini
 python3 bin/qchi run --host gemini --mode physics_solve --task "derive harmonic oscillator normalization"
@@ -85,6 +92,12 @@ python3 bin/qchi version
 
 `qchi run` now saves run artifacts by default to `.qchi/runs/<task_id>/` including role outputs, attempt logs, and final summary.
 Override with `--run-artifacts-dir <path>` or `QCHI_RUN_ARTIFACTS_DIR`.
+
+`qchi run` also appends a learning run record by default to `skills/qchi/learning/runs.jsonl`.
+Optional scoping flags:
+- `--learning-dir <path>` to change learning root
+- `--project-id <proj-...>` to also append in `skills/qchi/learning/projects/<project-id>/<track>/runs.jsonl`
+- `--learning-track <physics|writing|coding-plotting>` to select project track (otherwise inferred from mode)
 
 `qchi dashboard` manages the local learning UI:
 - `dashboard build`: generate `dashboard/learning_data.json` from `skills/qchi/learning/*`

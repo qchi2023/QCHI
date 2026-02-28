@@ -46,6 +46,8 @@ python3 bin/qchi version
 
 Run artifacts are saved by default under `.qchi/runs/<task_id>/`.
 Override artifact root with `--run-artifacts-dir <path>` or `QCHI_RUN_ARTIFACTS_DIR`.
+Learning runs are appended by default to `skills/qchi/learning/runs.jsonl`.
+Use `--project-id` and optional `--learning-track` for project-scoped run logs.
 
 ## 3) OpenClaw
 OpenClaw CLI commands

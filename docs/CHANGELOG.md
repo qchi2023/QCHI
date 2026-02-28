@@ -39,6 +39,16 @@
   - per-project track breakdown (physics/writing/coding-plotting)
   - heuristics summaries and expandable YAML views
 - Updated `scripts/run_learning_dashboard.sh` to call `qchi dashboard serve`.
+- Added automatic learning run logging in `qchi run`:
+  - appends run records to `skills/qchi/learning/runs.jsonl`
+  - optional project-scoped logging via `--project-id` and `--learning-track`
+  - optional learning root override via `--learning-dir` or `QCHI_LEARNING_DIR`
+- Added project-layout auto-bootstrap when project-scoped learning logging is used.
+- Added Python CLI test suite under `tests/test_qchi_cli.py`.
+- Made CLI installable as a console entrypoint:
+  - added `qchi_cli.py` module
+  - kept `bin/qchi` as compatibility wrapper
+  - added `pyproject.toml` with `qchi` script entry
 
 ## 2026-02-20
 - Consolidated on `qchi` as canonical skill and removed deprecated `skills/qchi-top-layer` variant.
