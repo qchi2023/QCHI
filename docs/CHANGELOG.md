@@ -26,6 +26,11 @@
   - `README.md`
   - `docs/INSTALL_AND_USE.md`
   - `docs/HOST_COMMANDS.md`
+- Added run-artifact logging for `qchi run`:
+  - default path `.qchi/runs/<task_id>/`
+  - per-run `roles/`, `attempts/`, and `final/` outputs
+  - persisted raw role outputs and parsed JSON role evidence
+  - configurable artifact root via `--run-artifacts-dir` or `QCHI_RUN_ARTIFACTS_DIR`
 
 ## 2026-02-20
 - Consolidated on `qchi` as canonical skill and removed deprecated `skills/qchi-top-layer` variant.

@@ -55,6 +55,9 @@ python3 bin/qchi lint report --file templates/OUTPUT_TEMPLATE.md
 python3 bin/qchi version
 ```
 
+By default, `qchi run` writes run artifacts to `.qchi/runs/<task_id>/` (role outputs, attempt logs, final summary).
+Set `--run-artifacts-dir <path>` or `QCHI_RUN_ARTIFACTS_DIR` to change the artifact root.
+
 Legacy compatibility: `python3 bin/qchi --mode ... --task ...` is still accepted and maps to `qchi run`.
 
 ## B) Generic host use (Codex, Claude Code, Cursor, Antigravity)

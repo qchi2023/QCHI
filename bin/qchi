@@ -7,6 +7,7 @@ import subprocess
 import sys
 import tempfile
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 from textwrap import dedent
 
@@ -37,6 +38,7 @@ DEFAULT_LINT_CANDIDATES = [
     REPO_ROOT / "tools" / "qchi-lint" / "target" / "debug" / "qchi-lint",
     REPO_ROOT / "tools" / "qchi-lint" / "target" / "release" / "qchi-lint",
 ]
+DEFAULT_RUN_ARTIFACTS_ROOT = REPO_ROOT / ".qchi" / "runs"
 
 CORE_REQUIRED_ROLES = [
     "planner",
@@ -58,6 +60,10 @@ ROLE_DISPLAY_NAMES = {
 }
 
 VALID_DECISIONS = {"pass", "fail", "deferred", "not_applicable", "unknown"}
+
+
+class HostExecutionError(RuntimeError):
+    pass
 
 
 def positive_int(value):
@@ -90,6 +96,34 @@ def resolve_lint_bin(cli_value):
     return DEFAULT_LINT_CANDIDATES[0]
 
 
+def resolve_run_artifacts_root(cli_value):
+    if cli_value:
+        return Path(cli_value).expanduser()
+
+    env_value = os.environ.get("QCHI_RUN_ARTIFACTS_DIR")
+    if env_value:
+        return Path(env_value).expanduser()
+
+    return DEFAULT_RUN_ARTIFACTS_ROOT
+
+
+def utc_now_iso():
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def write_text_file(path, content):
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    text = str(content or "")
+    if text and not text.endswith("\n"):
+        text += "\n"
+    path.write_text(text, encoding="utf-8")
+
+
+def write_json_file(path, payload):
+    write_text_file(path, json.dumps(payload, indent=2, sort_keys=True))
+
+
 def required_roles_for_mode(mode):
     roles = ["planner", "derivation", "symbolic_verifier", "numeric_verifier", "referee", "integrator"]
     if canonical_mode(mode) == "paper_reproduction":
@@ -106,7 +140,18 @@ def assert_required_roles_present(mode, role_pipeline):
         raise ValueError("paper_reproduction mode requires source_miner role")
 
 
-def fatal_policy_failure(message):
+def fatal_policy_failure(message, run_dir=None):
+    if run_dir:
+        write_text_file(Path(run_dir) / "final" / "fatal_error.txt", message)
+        write_json_file(
+            Path(run_dir) / "final" / "summary.json",
+            {
+                "status": "failed",
+                "reason": "policy_failure",
+                "message": str(message),
+                "finished_at": utc_now_iso(),
+            },
+        )
     print(f"\n[POLICY FAILURE] {message}")
     sys.exit(2)
 
@@ -133,19 +178,16 @@ def execute_host(host_name, prompt):
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, check=True)
         return result.stdout.strip()
-    except FileNotFoundError:
+    except FileNotFoundError as exc:
         hint = HOST_INSTALL_HINTS.get(host_name, "Install the host CLI and verify it is in PATH.")
-        print(
-            f"\n[FATAL ERROR] The host CLI '{host_name}' is not installed or not in PATH.\n"
-            f"Hint: {hint}"
-        )
-        sys.exit(1)
+        raise HostExecutionError(
+            f"The host CLI '{host_name}' is not installed or not in PATH. Hint: {hint}"
+        ) from exc
     except subprocess.CalledProcessError as e:
         stderr = (e.stderr or "").strip()
         stdout = (e.stdout or "").strip()
         details = stderr or stdout or f"exit code {e.returncode}"
-        print(f"\n[FATAL ERROR] The host '{host_name}' returned an error:\n{details}")
-        sys.exit(1)
+        raise HostExecutionError(f"The host '{host_name}' returned an error: {details}") from e
 
 
 def run_markdown_agent(host, role_name, instructions, task_context):
@@ -165,7 +207,10 @@ def run_markdown_agent(host, role_name, instructions, task_context):
         """
     ).strip()
 
-    return execute_host(host, prompt)
+    try:
+        return execute_host(host, prompt)
+    except HostExecutionError as exc:
+        raise RuntimeError(f"{role_name} execution failed: {exc}") from exc
 
 
 def normalize_decision(value):
@@ -256,7 +301,16 @@ def compact(text, limit=500):
     return t[:limit] + " ..."
 
 
-def run_structured_agent(host, role_key, instructions, task_context, task_id, subtask_id, to_role):
+def run_structured_agent(
+    host,
+    role_key,
+    instructions,
+    task_context,
+    task_id,
+    subtask_id,
+    to_role,
+    raw_output_hook=None,
+):
     role_name = ROLE_DISPLAY_NAMES.get(role_key, role_key)
     print(f"[*] Spawning [{role_name.upper()}] Agent via {host}...")
 
@@ -296,7 +350,12 @@ def run_structured_agent(host, role_key, instructions, task_context, task_id, su
         """
     ).strip()
 
-    raw = execute_host(host, prompt)
+    try:
+        raw = execute_host(host, prompt)
+    except HostExecutionError as exc:
+        return None, f"{role_key} execution failed: {exc}"
+    if raw_output_hook is not None:
+        raw_output_hook(raw)
     payload, parse_error = parse_json_payload(raw)
     if parse_error:
         return None, f"{role_key} produced invalid JSON: {parse_error}. Output preview: {compact(raw)}"
@@ -437,13 +496,53 @@ def orchestrate(args):
     lint_bin = resolve_lint_bin(args.lint_bin)
     mode_key = canonical_mode(args.mode)
     role_pipeline = required_roles_for_mode(mode_key)
+    task_id = f"qchi-{int(time.time())}"
+    run_artifacts_root = resolve_run_artifacts_root(args.run_artifacts_dir)
+    run_dir = run_artifacts_root / task_id
+    roles_dir = run_dir / "roles"
+    attempts_dir = run_dir / "attempts"
+    final_dir = run_dir / "final"
+    for path in [roles_dir, attempts_dir, final_dir]:
+        path.mkdir(parents=True, exist_ok=True)
+
+    started_at = utc_now_iso()
+    write_json_file(
+        run_dir / "run_context.json",
+        {
+            "task_id": task_id,
+            "started_at": started_at,
+            "host": args.host,
+            "mode": args.mode,
+            "task": args.task,
+            "max_retries": args.max_retries,
+            "role_pipeline": role_pipeline,
+            "lint_bin": str(lint_bin),
+            "run_artifacts_root": str(run_artifacts_root),
+            "run_dir": str(run_dir),
+        },
+    )
 
     try:
         assert_required_roles_present(mode_key, role_pipeline)
     except ValueError as exc:
-        fatal_policy_failure(str(exc))
+        fatal_policy_failure(str(exc), run_dir=run_dir)
 
-    task_id = f"qchi-{int(time.time())}"
+    def abort_run(message, reason):
+        write_text_file(final_dir / "fatal_error.txt", message)
+        write_json_file(
+            final_dir / "summary.json",
+            {
+                "status": "failed",
+                "reason": reason,
+                "message": str(message),
+                "task_id": task_id,
+                "host": args.host,
+                "mode": args.mode,
+                "finished_at": utc_now_iso(),
+            },
+        )
+        print(f"\n[FATAL ERROR] {message}")
+        sys.exit(1)
 
     print("=========================================")
     print("    QCHI: Research Operating Layer       ")
@@ -451,12 +550,14 @@ def orchestrate(args):
     print(f"Host: {args.host} | Mode: {args.mode}")
     print(f"Task: {args.task}")
     print(f"Linter: {lint_bin}")
-    print(f"Role pipeline: {', '.join(role_pipeline)}\n")
+    print(f"Role pipeline: {', '.join(role_pipeline)}")
+    print(f"Run artifacts: {run_dir}\n")
 
     planner_instructions = (
         "Decompose the task into minimal verifiable subtasks. "
         "Define assumptions, required outputs, and explicit acceptance checks."
     )
+    planner_raw_path = roles_dir / "planner.raw.txt"
     planner_msg, planner_error = run_structured_agent(
         args.host,
         "planner",
@@ -465,9 +566,11 @@ def orchestrate(args):
         task_id,
         "planner-main",
         "derivation",
+        raw_output_hook=lambda raw, path=planner_raw_path: write_text_file(path, raw),
     )
     if planner_error:
-        fatal_policy_failure(planner_error)
+        fatal_policy_failure(planner_error, run_dir=run_dir)
+    write_json_file(roles_dir / "planner.json", planner_msg)
 
     source_msg = None
     if "source_miner" in role_pipeline:
@@ -475,6 +578,7 @@ def orchestrate(args):
             "Build an arXiv-first source strategy for this reproduction task. "
             "List concrete source targets, scope coverage, and blockers."
         )
+        source_raw_path = roles_dir / "source_miner.raw.txt"
         source_msg, source_error = run_structured_agent(
             args.host,
             "source_miner",
@@ -483,15 +587,29 @@ def orchestrate(args):
             task_id,
             "source-plan",
             "derivation",
+            raw_output_hook=lambda raw, path=source_raw_path: write_text_file(path, raw),
         )
         if source_error:
-            fatal_policy_failure(source_error)
+            fatal_policy_failure(source_error, run_dir=run_dir)
+        write_json_file(roles_dir / "source_miner.json", source_msg)
 
     derivation = ""
     last_feedback = None
+    accepted_attempt = None
 
     for attempt in range(1, args.max_retries + 1):
         print(f"\n=== Attempt {attempt}/{args.max_retries} ===")
+        attempt_dir = attempts_dir / f"attempt-{attempt:03d}"
+        attempt_dir.mkdir(parents=True, exist_ok=True)
+        write_json_file(
+            attempt_dir / "meta.json",
+            {
+                "attempt": attempt,
+                "max_retries": args.max_retries,
+                "started_at": utc_now_iso(),
+                "last_feedback": last_feedback or "",
+            },
+        )
 
         derivation_context_parts = [
             f"User task:\n{args.task}",
@@ -504,24 +622,45 @@ def orchestrate(args):
             derivation_context_parts.append(f"Prior gate failures to fix:\n{last_feedback}")
 
         deriver_instructions = build_deriver_instructions(last_feedback)
-        derivation = run_markdown_agent(
-            args.host,
-            f"Derivation (Attempt {attempt})",
-            deriver_instructions,
-            "\n\n".join(derivation_context_parts),
-        )
+        write_text_file(attempt_dir / "derivation_context.txt", "\n\n".join(derivation_context_parts))
+        write_text_file(attempt_dir / "derivation_instructions.txt", deriver_instructions)
+        try:
+            derivation = run_markdown_agent(
+                args.host,
+                f"Derivation (Attempt {attempt})",
+                deriver_instructions,
+                "\n\n".join(derivation_context_parts),
+            )
+        except RuntimeError as exc:
+            abort_run(str(exc), "derivation_execution_failed")
+        write_text_file(attempt_dir / "derivation.md", derivation)
 
         if not derivation.strip():
             print("\n[!] Quality Gate Failed: Derivation agent returned empty output")
+            write_json_file(
+                attempt_dir / "gate_issues.json",
+                {
+                    "passed": False,
+                    "issues": ["derivation output was empty"],
+                },
+            )
             if attempt < args.max_retries:
                 last_feedback = "- Derivation output was empty. Return the full required markdown artifact."
+                write_text_file(attempt_dir / "retry_feedback.txt", last_feedback)
                 time.sleep(2)
                 continue
-            print("\n[FATAL ERROR] Empty derivation after maximum retries. Aborting.")
-            sys.exit(1)
+            abort_run("Empty derivation after maximum retries.", "empty_derivation")
 
         lint_pass, lint_msg = run_qchi_lint(derivation, lint_bin)
+        write_json_file(
+            attempt_dir / "lint.json",
+            {
+                "passed": lint_pass,
+                "message": lint_msg,
+            },
+        )
 
+        symbolic_raw_path = attempt_dir / "symbolic_verifier.raw.txt"
         symbolic_msg, symbolic_error = run_structured_agent(
             args.host,
             "symbolic_verifier",
@@ -530,10 +669,13 @@ def orchestrate(args):
             task_id,
             f"symbolic-attempt-{attempt}",
             "integrator",
+            raw_output_hook=lambda raw, path=symbolic_raw_path: write_text_file(path, raw),
         )
         if symbolic_error:
-            fatal_policy_failure(symbolic_error)
+            fatal_policy_failure(symbolic_error, run_dir=run_dir)
+        write_json_file(attempt_dir / "symbolic_verifier.json", symbolic_msg)
 
+        numeric_raw_path = attempt_dir / "numeric_verifier.raw.txt"
         numeric_msg, numeric_error = run_structured_agent(
             args.host,
             "numeric_verifier",
@@ -542,10 +684,13 @@ def orchestrate(args):
             task_id,
             f"numeric-attempt-{attempt}",
             "integrator",
+            raw_output_hook=lambda raw, path=numeric_raw_path: write_text_file(path, raw),
         )
         if numeric_error:
-            fatal_policy_failure(numeric_error)
+            fatal_policy_failure(numeric_error, run_dir=run_dir)
+        write_json_file(attempt_dir / "numeric_verifier.json", numeric_msg)
 
+        referee_raw_path = attempt_dir / "referee.raw.txt"
         referee_msg, referee_error = run_structured_agent(
             args.host,
             "referee",
@@ -554,9 +699,11 @@ def orchestrate(args):
             task_id,
             f"referee-attempt-{attempt}",
             "integrator",
+            raw_output_hook=lambda raw, path=referee_raw_path: write_text_file(path, raw),
         )
         if referee_error:
-            fatal_policy_failure(referee_error)
+            fatal_policy_failure(referee_error, run_dir=run_dir)
+        write_json_file(attempt_dir / "referee.json", referee_msg)
 
         integrator_context = {
             "mode": args.mode,
@@ -567,6 +714,8 @@ def orchestrate(args):
             "referee": referee_msg,
             "derivation_excerpt": compact(derivation, limit=3000),
         }
+        write_json_file(attempt_dir / "integrator_context.json", integrator_context)
+        integrator_raw_path = attempt_dir / "integrator.raw.txt"
         integrator_msg, integrator_error = run_structured_agent(
             args.host,
             "integrator",
@@ -579,18 +728,28 @@ def orchestrate(args):
             task_id,
             f"integrator-attempt-{attempt}",
             "final",
+            raw_output_hook=lambda raw, path=integrator_raw_path: write_text_file(path, raw),
         )
         if integrator_error:
-            fatal_policy_failure(integrator_error)
+            fatal_policy_failure(integrator_error, run_dir=run_dir)
+        write_json_file(attempt_dir / "integrator.json", integrator_msg)
 
         gate_issues = []
         if not lint_pass:
             gate_issues.append(f"qchi-lint failed: {lint_msg}")
 
         gate_issues.extend(evaluate_role_gates(symbolic_msg, numeric_msg, referee_msg, integrator_msg))
+        write_json_file(
+            attempt_dir / "gate_issues.json",
+            {
+                "passed": not gate_issues,
+                "issues": gate_issues,
+            },
+        )
 
         if not gate_issues:
             print("\n[+] Quality Gate Passed with mandatory subagent evidence. Derivation accepted.")
+            accepted_attempt = attempt
             break
 
         print("\n[!] Quality Gate Failed:")
@@ -606,19 +765,44 @@ def orchestrate(args):
                 referee_msg,
                 integrator_msg,
             )
+            write_text_file(attempt_dir / "retry_feedback.txt", last_feedback)
             time.sleep(2)
         else:
-            print("\n[FATAL ERROR] Agent failed to produce compliant output after maximum retries. Aborting.")
-            sys.exit(1)
+            abort_run(
+                "Agent failed to produce compliant output after maximum retries.",
+                "max_retries_exceeded",
+            )
 
+    output_path = None
     if args.output_file:
         output_path = Path(args.output_file).expanduser()
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(derivation, encoding="utf-8")
         print(f"[*] Saved accepted derivation to {output_path}")
 
+    write_text_file(final_dir / "derivation.md", derivation)
+    write_json_file(
+        final_dir / "summary.json",
+        {
+            "status": "success",
+            "task_id": task_id,
+            "host": args.host,
+            "mode": args.mode,
+            "task": args.task,
+            "role_pipeline": role_pipeline,
+            "max_retries": args.max_retries,
+            "accepted_attempt": accepted_attempt,
+            "lint_bin": str(lint_bin),
+            "run_dir": str(run_dir),
+            "output_file": str(output_path) if output_path else "",
+            "started_at": started_at,
+            "finished_at": utc_now_iso(),
+        },
+    )
+
     print("\n[FINAL DERIVATION OUTPUT]\n" + derivation)
     print("=========================================")
+    print(f"[*] Run artifacts saved to {run_dir}")
     print("[*] QCHI Orchestration Complete.")
 
 
@@ -773,6 +957,10 @@ def add_run_args(parser):
     parser.add_argument(
         "--lint-bin",
         help="Optional path to qchi-lint binary; defaults to env QCHI_LINT_BIN or local target path",
+    )
+    parser.add_argument(
+        "--run-artifacts-dir",
+        help="Optional run-artifact root; defaults to env QCHI_RUN_ARTIFACTS_DIR or .qchi/runs",
     )
 
 

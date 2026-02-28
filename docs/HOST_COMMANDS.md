@@ -42,6 +42,9 @@ python3 bin/qchi lint report --file templates/OUTPUT_TEMPLATE.md
 python3 bin/qchi version
 ```
 
+Run artifacts are saved by default under `.qchi/runs/<task_id>/`.
+Override artifact root with `--run-artifacts-dir <path>` or `QCHI_RUN_ARTIFACTS_DIR`.
+
 ## 3) OpenClaw
 OpenClaw CLI commands
 ```bash

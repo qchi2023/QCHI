@@ -81,6 +81,9 @@ python3 bin/qchi lint report --file templates/OUTPUT_TEMPLATE.md
 python3 bin/qchi version
 ```
 
+`qchi run` now saves run artifacts by default to `.qchi/runs/<task_id>/` including role outputs, attempt logs, and final summary.
+Override with `--run-artifacts-dir <path>` or `QCHI_RUN_ARTIFACTS_DIR`.
+
 The `run` command enforces mandatory role evidence:
 - planner
 - derivation
