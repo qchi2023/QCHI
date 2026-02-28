@@ -38,6 +38,10 @@
   - global pass-rate cards and parse-error visibility
   - per-project track breakdown (physics/writing/coding-plotting)
   - heuristics summaries and expandable YAML views
+- Added dashboard trend chart view for project tracks:
+  - metric selector (`run gate %`, `run count`, `eval pass %`, `regression pass %`)
+  - rolling time windows (14/30/90 days)
+  - multi-line per-track rendering (physics/writing/coding-plotting)
 - Updated `scripts/run_learning_dashboard.sh` to call `qchi dashboard serve`.
 - Added automatic learning run logging in `qchi run`:
   - appends run records to `skills/qchi/learning/runs.jsonl`

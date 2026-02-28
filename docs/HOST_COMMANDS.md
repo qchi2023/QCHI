@@ -104,3 +104,4 @@ bash scripts/run_conformance.sh ~/Documents/QCHI-Projects/<project-id> <project-
 python3 bin/qchi dashboard serve --port 8787
 ```
 Open `http://127.0.0.1:8787/dashboard/`
+Use the Track Trends controls to switch metric and 14/30/90-day rolling windows for each project track.

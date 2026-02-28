@@ -102,6 +102,7 @@ Optional scoping flags:
 `qchi dashboard` manages the local learning UI:
 - `dashboard build`: generate `dashboard/learning_data.json` from `skills/qchi/learning/*`
 - `dashboard serve`: build and serve the dashboard at `http://127.0.0.1:<port>/dashboard/`
+- UI includes per-project trend lines by track with metric and rolling-window controls
 
 The `run` command enforces mandatory role evidence:
 - planner

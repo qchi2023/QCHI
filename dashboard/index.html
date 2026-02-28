@@ -17,6 +17,9 @@
       --danger: #a7362f;
       --warn: #a05a1a;
       --ok: #1f7a35;
+      --track-physics: #1b6f63;
+      --track-writing: #9c4f17;
+      --track-coding: #2a5398;
       --shadow: 0 12px 30px rgba(30, 26, 22, 0.12);
       --radius: 14px;
       --radius-sm: 10px;
@@ -207,6 +210,13 @@
       font-weight: 700;
     }
 
+    .control-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: end;
+    }
+
     select {
       min-width: 180px;
       border: 1px solid var(--line);
@@ -221,6 +231,72 @@
       display: grid;
       gap: 12px;
       grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .chart-shell {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.62);
+      padding: 10px;
+      min-height: 160px;
+    }
+
+    .chart-host {
+      overflow-x: auto;
+    }
+
+    .chart-svg {
+      width: 100%;
+      min-width: 620px;
+      height: 320px;
+      display: block;
+    }
+
+    .chart-empty {
+      margin: 8px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .chart-grid {
+      stroke: var(--line);
+      stroke-width: 1;
+      stroke-dasharray: 4 6;
+    }
+
+    .chart-axis {
+      stroke: #b7ab93;
+      stroke-width: 1;
+    }
+
+    .chart-axis-label {
+      font-size: 10.5px;
+      fill: var(--muted);
+      font-family: "IBM Plex Mono", "SF Mono", "Consolas", monospace;
+    }
+
+    .legend {
+      margin: 10px 0 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      font-size: 0.83rem;
+      color: var(--muted);
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      display: inline-block;
     }
 
     .track-card {
@@ -356,9 +432,50 @@
       </div>
       <div id="projects"></div>
     </section>
+
+    <section class="card">
+      <div class="toolbar">
+        <h2 class="section-title" style="margin:0;">Track Trends</h2>
+        <div class="control-row">
+          <div>
+            <label for="metric-select">Metric</label>
+            <select id="metric-select">
+              <option value="run_gate_pass_rate">Run gate pass %</option>
+              <option value="runs_total">Run count</option>
+              <option value="eval_pass_rate">Eval pass %</option>
+              <option value="regression_pass_rate">Regression pass %</option>
+            </select>
+          </div>
+          <div>
+            <label for="window-select">Window</label>
+            <select id="window-select">
+              <option value="14">14 days</option>
+              <option value="30" selected>30 days</option>
+              <option value="90">90 days</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <p id="trend-caption" class="muted">Loading trend data...</p>
+      <div id="trend-chart" class="chart-shell"></div>
+    </section>
   </main>
 
   <script>
+    const TRACKS = ["physics", "writing", "coding-plotting"];
+    const TRACK_COLORS = {
+      physics: "#1b6f63",
+      writing: "#9c4f17",
+      "coding-plotting": "#2a5398"
+    };
+
+    const dashboardState = {
+      projectsMap: {},
+      projectName: "",
+      metric: "run_gate_pass_rate",
+      windowDays: 30
+    };
+
     function asArray(value) {
       return Array.isArray(value) ? value : [];
     }
@@ -515,8 +632,7 @@
         return;
       }
 
-      const tracks = ["physics", "writing", "coding-plotting"];
-      const cards = tracks.map((track) => {
+      const cards = TRACKS.map((track) => {
         const bucket = project[track] || { runs: [], evals: [], regressions: [], heuristics_yaml: "" };
         const summary = summaryForBucket(bucket);
         const heuristics = parseYamlHeuristics(bucket.heuristics_yaml || "");
@@ -540,21 +656,352 @@
       container.innerHTML = `<div class="projects-grid">${cards}</div>`;
     }
 
-    function initProjectSelector(projectsMap) {
-      const selector = document.getElementById("project-select");
-      const names = Object.keys(projectsMap || {});
-      if (!names.length) {
-        selector.disabled = true;
-        selector.innerHTML = "<option>No projects</option>";
-        document.getElementById("projects").innerHTML = "<p class='muted'>No project learning data yet. Create files under skills/qchi/learning/projects/&lt;project-id&gt;/.</p>";
+    function parseRowTimestamp(row) {
+      if (!row || typeof row !== "object") {
+        return null;
+      }
+      const candidates = ["ts", "timestamp", "created_at", "updated_at", "recorded_at", "run_ts", "date"];
+      for (const key of candidates) {
+        const raw = row[key];
+        if (raw === null || raw === undefined || raw === "") {
+          continue;
+        }
+        let parsed = null;
+        if (typeof raw === "number") {
+          const millis = raw > 1e12 ? raw : raw * 1000;
+          parsed = new Date(millis);
+        } else {
+          parsed = new Date(String(raw));
+        }
+        if (!Number.isNaN(parsed.getTime())) {
+          return parsed;
+        }
+      }
+      return null;
+    }
+
+    function dayKey(dateObj) {
+      return dateObj.toISOString().slice(0, 10);
+    }
+
+    function dayLabel(dayText) {
+      const parsed = new Date(`${dayText}T00:00:00Z`);
+      if (Number.isNaN(parsed.getTime())) {
+        return dayText;
+      }
+      return parsed.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+    }
+
+    function metricLabel(metric) {
+      if (metric === "run_gate_pass_rate") return "Run gate pass %";
+      if (metric === "runs_total") return "Run count";
+      if (metric === "eval_pass_rate") return "Eval pass %";
+      return "Regression pass %";
+    }
+
+    function isRateMetric(metric) {
+      return metric !== "runs_total";
+    }
+
+    function rowsForMetric(bucket, metric) {
+      if (metric === "eval_pass_rate") return asArray(bucket && bucket.evals);
+      if (metric === "regression_pass_rate") return asArray(bucket && bucket.regressions);
+      return asArray(bucket && bucket.runs);
+    }
+
+    function rowPass(metric, row) {
+      if (metric === "run_gate_pass_rate") return row && row.quality_gate_pass === true;
+      if (metric === "eval_pass_rate" || metric === "regression_pass_rate") return row && row.pass === true;
+      return false;
+    }
+
+    function buildDailySeries(bucket, metric) {
+      const rows = rowsForMetric(bucket, metric);
+      const byDay = new Map();
+
+      for (const row of rows) {
+        const dateObj = parseRowTimestamp(row);
+        if (!dateObj) {
+          continue;
+        }
+        const key = dayKey(dateObj);
+        const slot = byDay.get(key) || { day: key, total: 0, pass: 0 };
+        slot.total += 1;
+        if (rowPass(metric, row)) {
+          slot.pass += 1;
+        }
+        byDay.set(key, slot);
+      }
+
+      return [...byDay.values()]
+        .sort((a, b) => a.day.localeCompare(b.day))
+        .map((entry) => {
+          if (metric === "runs_total") {
+            return { day: entry.day, value: entry.total, total: entry.total, pass: entry.pass };
+          }
+          const value = entry.total ? (entry.pass / entry.total) * 100 : null;
+          return { day: entry.day, value, total: entry.total, pass: entry.pass };
+        });
+    }
+
+    function shiftDay(dayText, deltaDays) {
+      const parsed = new Date(`${dayText}T00:00:00Z`);
+      parsed.setUTCDate(parsed.getUTCDate() + deltaDays);
+      return parsed.toISOString().slice(0, 10);
+    }
+
+    function latestDay(seriesMap) {
+      const days = [];
+      for (const track of TRACKS) {
+        const points = asArray(seriesMap[track]);
+        for (const point of points) {
+          days.push(point.day);
+        }
+      }
+      if (!days.length) {
+        return null;
+      }
+      days.sort();
+      return days[days.length - 1];
+    }
+
+    function buildWindowDays(endDay, windowDays) {
+      const days = [];
+      for (let i = windowDays - 1; i >= 0; i -= 1) {
+        days.push(shiftDay(endDay, -i));
+      }
+      return days;
+    }
+
+    function formatMetricValue(metric, value) {
+      if (value === null || value === undefined || Number.isNaN(value)) {
+        return "n/a";
+      }
+      if (isRateMetric(metric)) {
+        return `${Math.round(value)}%`;
+      }
+      return String(Math.round(value));
+    }
+
+    function buildTrendSeries(project, metric, windowDays) {
+      const rawSeries = {};
+      for (const track of TRACKS) {
+        rawSeries[track] = buildDailySeries(project[track] || {}, metric);
+      }
+
+      const endDay = latestDay(rawSeries);
+      if (!endDay) {
+        return null;
+      }
+
+      const days = buildWindowDays(endDay, windowDays);
+      const aligned = [];
+      const fallbackValue = metric === "runs_total" ? 0 : null;
+      for (const track of TRACKS) {
+        const pointMap = new Map(rawSeries[track].map((point) => [point.day, point]));
+        const points = days.map((day) => {
+          const found = pointMap.get(day);
+          return { day, value: found ? found.value : fallbackValue };
+        });
+        aligned.push({ track, color: TRACK_COLORS[track], points });
+      }
+
+      return {
+        startDay: days[0],
+        endDay: days[days.length - 1],
+        series: aligned
+      };
+    }
+
+    function buildChartSvg(seriesSet, metric) {
+      const width = 980;
+      const height = 320;
+      const margin = { top: 16, right: 18, bottom: 42, left: 56 };
+      const plotWidth = width - margin.left - margin.right;
+      const plotHeight = height - margin.top - margin.bottom;
+
+      const pointCount = seriesSet[0].points.length;
+      const xAt = (idx) => {
+        if (pointCount <= 1) {
+          return margin.left + plotWidth / 2;
+        }
+        return margin.left + (idx / (pointCount - 1)) * plotWidth;
+      };
+
+      const allValues = [];
+      for (const series of seriesSet) {
+        for (const point of series.points) {
+          if (point.value !== null && point.value !== undefined) {
+            allValues.push(point.value);
+          }
+        }
+      }
+
+      const yMin = 0;
+      let yMax = 100;
+      if (!isRateMetric(metric)) {
+        const maxValue = allValues.length ? Math.max(...allValues) : 1;
+        yMax = Math.max(1, Math.ceil(maxValue * 1.15));
+      }
+
+      const yAt = (value) => {
+        if (value === null || value === undefined) {
+          return null;
+        }
+        if (yMax === yMin) {
+          return margin.top + plotHeight;
+        }
+        return margin.top + ((yMax - value) / (yMax - yMin)) * plotHeight;
+      };
+
+      const gridLines = [];
+      const tickCount = 4;
+      for (let i = 0; i <= tickCount; i += 1) {
+        const ratio = i / tickCount;
+        const y = margin.top + ratio * plotHeight;
+        const tickValue = Math.round((yMax - ratio * (yMax - yMin)) * 10) / 10;
+        const tickLabel = isRateMetric(metric) ? `${Math.round(tickValue)}%` : String(Math.round(tickValue));
+        gridLines.push(`<line x1="${margin.left}" y1="${y}" x2="${width - margin.right}" y2="${y}" class="chart-grid"></line>`);
+        gridLines.push(`<text x="${margin.left - 8}" y="${y + 4}" text-anchor="end" class="chart-axis-label">${tickLabel}</text>`);
+      }
+
+      const xLabels = [];
+      const xStep = Math.max(1, Math.floor(pointCount / 6));
+      for (let idx = 0; idx < pointCount; idx += xStep) {
+        const x = xAt(idx);
+        xLabels.push(`<text x="${x}" y="${height - 12}" text-anchor="middle" class="chart-axis-label">${dayLabel(seriesSet[0].points[idx].day)}</text>`);
+      }
+      if ((pointCount - 1) % xStep !== 0) {
+        const lastX = xAt(pointCount - 1);
+        xLabels.push(`<text x="${lastX}" y="${height - 12}" text-anchor="middle" class="chart-axis-label">${dayLabel(seriesSet[0].points[pointCount - 1].day)}</text>`);
+      }
+
+      const seriesShapes = [];
+      const circles = [];
+      for (const series of seriesSet) {
+        let current = [];
+        const segments = [];
+
+        series.points.forEach((point, idx) => {
+          const y = yAt(point.value);
+          const x = xAt(idx);
+          if (y === null) {
+            if (current.length) {
+              segments.push(current);
+              current = [];
+            }
+            return;
+          }
+          current.push([x, y]);
+          circles.push(`<circle cx="${x}" cy="${y}" r="2.8" fill="${series.color}"></circle>`);
+        });
+        if (current.length) {
+          segments.push(current);
+        }
+
+        for (const segment of segments) {
+          const pointsText = segment.map((coords) => `${coords[0]},${coords[1]}`).join(" ");
+          seriesShapes.push(
+            `<polyline points="${pointsText}" fill="none" stroke="${series.color}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></polyline>`
+          );
+        }
+      }
+
+      const xAxisY = margin.top + plotHeight;
+      const axes = [
+        `<line x1="${margin.left}" y1="${margin.top}" x2="${margin.left}" y2="${xAxisY}" class="chart-axis"></line>`,
+        `<line x1="${margin.left}" y1="${xAxisY}" x2="${width - margin.right}" y2="${xAxisY}" class="chart-axis"></line>`
+      ];
+
+      return `
+        <div class="chart-host">
+          <svg viewBox="0 0 ${width} ${height}" class="chart-svg" role="img" aria-label="Trend chart">
+            ${gridLines.join("")}
+            ${axes.join("")}
+            ${seriesShapes.join("")}
+            ${circles.join("")}
+            ${xLabels.join("")}
+          </svg>
+        </div>
+      `;
+    }
+
+    function renderTrendChart() {
+      const chartHost = document.getElementById("trend-chart");
+      const caption = document.getElementById("trend-caption");
+      const project = dashboardState.projectsMap[dashboardState.projectName];
+
+      if (!project) {
+        caption.textContent = "No project selected.";
+        chartHost.innerHTML = "<p class='chart-empty'>No project trend data available.</p>";
         return;
       }
 
+      const trendData = buildTrendSeries(project, dashboardState.metric, dashboardState.windowDays);
+      if (!trendData) {
+        caption.textContent = `No timestamped records for ${dashboardState.projectName}.`;
+        chartHost.innerHTML = "<p class='chart-empty'>Add records with `ts`/timestamp fields to runs, evals, or regressions to render trend lines.</p>";
+        return;
+      }
+
+      caption.textContent = `${metricLabel(dashboardState.metric)} for ${dashboardState.projectName} by track (${dayLabel(trendData.startDay)} to ${dayLabel(trendData.endDay)}).`;
+      const legend = trendData.series.map((series) => {
+        const latestPoint = [...series.points].reverse().find((point) => point.value !== null && point.value !== undefined);
+        return `
+          <li class="legend-item">
+            <span class="legend-swatch" style="background:${series.color};"></span>
+            <span>${series.track}: ${formatMetricValue(dashboardState.metric, latestPoint && latestPoint.value)}</span>
+          </li>
+        `;
+      }).join("");
+
+      chartHost.innerHTML = `${buildChartSvg(trendData.series, dashboardState.metric)}<ul class="legend">${legend}</ul>`;
+    }
+
+    function refreshProjectPanels() {
+      renderProjectTracks(dashboardState.projectName, dashboardState.projectsMap);
+      renderTrendChart();
+    }
+
+    function initProjectSelector(projectsMap) {
+      dashboardState.projectsMap = projectsMap || {};
+      const selector = document.getElementById("project-select");
+      const names = Object.keys(dashboardState.projectsMap);
+      if (!names.length) {
+        selector.disabled = true;
+        selector.innerHTML = "<option>No projects</option>";
+        dashboardState.projectName = "";
+        document.getElementById("projects").innerHTML = "<p class='muted'>No project learning data yet. Create files under skills/qchi/learning/projects/&lt;project-id&gt;/.</p>";
+        renderTrendChart();
+        return;
+      }
+
+      selector.disabled = false;
       selector.innerHTML = names.map((name) => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join("");
-      renderProjectTracks(names[0], projectsMap);
+      dashboardState.projectName = names[0];
+      selector.value = dashboardState.projectName;
+      refreshProjectPanels();
 
       selector.addEventListener("change", () => {
-        renderProjectTracks(selector.value, projectsMap);
+        dashboardState.projectName = selector.value;
+        refreshProjectPanels();
+      });
+    }
+
+    function initTrendControls() {
+      const metricSelect = document.getElementById("metric-select");
+      const windowSelect = document.getElementById("window-select");
+      metricSelect.value = dashboardState.metric;
+      windowSelect.value = String(dashboardState.windowDays);
+
+      metricSelect.addEventListener("change", () => {
+        dashboardState.metric = metricSelect.value;
+        renderTrendChart();
+      });
+
+      windowSelect.addEventListener("change", () => {
+        dashboardState.windowDays = Number(windowSelect.value) || 30;
+        renderTrendChart();
       });
     }
 
@@ -570,6 +1017,7 @@
     }
 
     async function boot() {
+      initTrendControls();
       const response = await fetch("learning_data.json", { cache: "no-store" });
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
@@ -590,6 +1038,8 @@
       document.getElementById("global-heuristics").textContent = "";
       document.getElementById("heuristics-summary").textContent = "";
       document.getElementById("projects").innerHTML = "";
+      document.getElementById("trend-caption").textContent = "";
+      document.getElementById("trend-chart").innerHTML = "";
     });
   </script>
 </body>

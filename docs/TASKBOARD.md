@@ -7,7 +7,6 @@
 ## Next
 - [ ] Add richer adapter compliance test corpus
 - [ ] Add auto-generated release notes from learning logs
-- [ ] Add chart view to local dashboard (trend lines by project/track)
 
 ## Done
 - [x] Consolidated on canonical `qchi` skill
@@ -21,4 +20,5 @@
 - [x] Added benchmark suite scaffold and CI validation (`tools/run_benchmarks.py`)
 - [x] Added LyX lint engine and CI hook (`tools/qchi_lyx_lint.py`)
 - [x] Added local learning dashboard (`dashboard/`, `scripts/run_learning_dashboard.sh`)
+- [x] Added chart view to local dashboard (trend lines by project/track)
 - [x] Added host helper scripts/docs (`scripts/host_help.sh`, `docs/HOST_COMMANDS.md`)

@@ -111,3 +111,4 @@ Local dashboard
 python3 bin/qchi dashboard serve --port 8787
 ```
 Then open `http://127.0.0.1:8787/dashboard/`
+Use the Track Trends panel to view per-project physics/writing/coding-plotting trend lines across a 14/30/90-day window.
