@@ -39,6 +39,7 @@ Host-specific adapter to load
 python3 bin/qchi doctor --host gemini
 python3 bin/qchi run --host gemini --mode physics_solve --task "your task here"
 python3 bin/qchi lint report --file templates/OUTPUT_TEMPLATE.md
+python3 bin/qchi regression sweep --suite skills/qchi/learning/benchmarks/baseline_v1.json
 python3 bin/qchi dashboard build
 python3 bin/qchi dashboard serve --port 8787
 python3 bin/qchi version
@@ -48,6 +49,7 @@ Run artifacts are saved by default under `.qchi/runs/<task_id>/`.
 Override artifact root with `--run-artifacts-dir <path>` or `QCHI_RUN_ARTIFACTS_DIR`.
 Learning runs are appended by default to `skills/qchi/learning/runs.jsonl`.
 Use `--project-id` and optional `--learning-track` for project-scoped run logs.
+Use `qchi regression sweep --results-file <json>` for full-suite scoring from recorded case results, or `--execute` to run cases through the orchestrator.
 
 ## 3) OpenClaw
 OpenClaw CLI commands
@@ -91,6 +93,7 @@ cargo run --manifest-path tools/qchi-lint/Cargo.toml -- jsonl --kind runs --file
 cargo run --manifest-path tools/qchi-lint/Cargo.toml -- jsonl --kind evals --file skills/qchi/learning/evals.jsonl
 cargo run --manifest-path tools/qchi-lint/Cargo.toml -- jsonl --kind regressions --file skills/qchi/learning/regressions.jsonl
 python3 tools/run_benchmarks.py
+python3 tools/run_benchmarks.py --results-file /path/to/sweep_results.json --min-runs 10
 python3 tools/qchi_lyx_lint.py --root .
 ```
 

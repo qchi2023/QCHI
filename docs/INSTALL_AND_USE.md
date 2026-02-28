@@ -52,6 +52,7 @@ Run the orchestrator directly from this repo:
 python3 bin/qchi doctor --host gemini
 python3 bin/qchi run --host gemini --mode physics_solve --task "derive harmonic oscillator normalization"
 python3 bin/qchi lint report --file templates/OUTPUT_TEMPLATE.md
+python3 bin/qchi regression sweep --suite skills/qchi/learning/benchmarks/baseline_v1.json
 python3 bin/qchi dashboard build
 python3 bin/qchi dashboard serve --port 8787
 python3 bin/qchi version
@@ -71,6 +72,11 @@ Optional logging controls:
 - `--learning-dir <path>` for alternate learning root
 - `--project-id <project-id>` for project-scoped run logging
 - `--learning-track <physics|writing|coding-plotting>` for project track selection
+
+`qchi regression sweep` supports three modes:
+- schema validation (default)
+- score-driven sweep with `--results-file <json>`
+- execution sweep with `--execute` (runs each benchmark case via `qchi run`)
 
 Legacy compatibility: `python3 bin/qchi --mode ... --task ...` is still accepted and maps to `qchi run`.
 

@@ -72,6 +72,79 @@ class QchiCliTests(unittest.TestCase):
         self.assertIn("build", result.stdout)
         self.assertIn("serve", result.stdout)
 
+    def test_regression_sweep_via_wrapper_results_mode(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            suite_path = root / "suite.json"
+            results_path = root / "results.json"
+            out_path = root / "summary.json"
+
+            suite_path.write_text(
+                json.dumps(
+                    {
+                        "suite": "test-suite",
+                        "version": 1,
+                        "cases": [
+                            {
+                                "case_id": "case-a",
+                                "domain": "physics",
+                                "mode": "physics_solve",
+                                "target": "task a",
+                                "required_checks": ["consistency"],
+                            },
+                            {
+                                "case_id": "case-b",
+                                "domain": "writing",
+                                "mode": "paper_reproduction",
+                                "target": "task b",
+                                "required_checks": ["provenance"],
+                            },
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            results_path.write_text(
+                json.dumps(
+                    {
+                        "cases": [
+                            {"case_id": "case-a", "pass": True, "score": 0.95, "run_id": "run-a"},
+                            {"case_id": "case-b", "pass": True, "score": 0.97, "run_id": "run-b"},
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(BIN_QCHI),
+                    "regression",
+                    "sweep",
+                    "--suite",
+                    str(suite_path),
+                    "--out",
+                    str(out_path),
+                    "--results-file",
+                    str(results_path),
+                    "--no-log",
+                    "--min-runs",
+                    "1",
+                ],
+                capture_output=True,
+                text=True,
+                check=False,
+                cwd=str(REPO_ROOT),
+            )
+            self.assertEqual(result.returncode, 0, msg=result.stderr or result.stdout)
+
+            summary = json.loads(out_path.read_text(encoding="utf-8"))
+            self.assertEqual(summary["status"], "pass")
+            self.assertEqual(summary["mode"], "results")
+            self.assertEqual(summary["evaluated_case_count"], 2)
+            self.assertGreaterEqual(summary["metrics"]["cpis"], 0.9)
+
 
 if __name__ == "__main__":
     unittest.main()

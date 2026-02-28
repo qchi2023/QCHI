@@ -5,7 +5,9 @@
   - `run`
   - `doctor`
   - `lint`
+  - `regression`
   - `version`
+  - `dashboard`
 - Kept backward compatibility for legacy invocation:
   - `python3 bin/qchi --mode ... --task ...` maps to `run`
 - Enforced mandatory role pipeline in CLI runtime:
@@ -53,6 +55,15 @@
   - added `qchi_cli.py` module
   - kept `bin/qchi` as compatibility wrapper
   - added `pyproject.toml` with `qchi` script entry
+- Added regression sweep backend and CLI integration:
+  - new command group `qchi regression sweep`
+  - `tools/run_benchmarks.py` now supports:
+    - schema validation mode (default)
+    - results-driven sweep mode via `--results-file`
+    - execution sweep mode via `--execute` (runs each case through `qchi run`)
+  - writes CPIS/stability metrics to summary JSON and can append:
+    - per-case eval rows to `skills/qchi/learning/evals.jsonl`
+    - suite-level decision rows to `skills/qchi/learning/regressions.jsonl`
 
 ## 2026-02-20
 - Consolidated on `qchi` as canonical skill and removed deprecated `skills/qchi-top-layer` variant.

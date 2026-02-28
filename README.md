@@ -85,6 +85,7 @@ qchi version
 python3 bin/qchi doctor --host gemini
 python3 bin/qchi run --host gemini --mode physics_solve --task "derive harmonic oscillator normalization"
 python3 bin/qchi lint report --file templates/OUTPUT_TEMPLATE.md
+python3 bin/qchi regression sweep --suite skills/qchi/learning/benchmarks/baseline_v1.json
 python3 bin/qchi dashboard build
 python3 bin/qchi dashboard serve --port 8787
 python3 bin/qchi version
@@ -103,6 +104,11 @@ Optional scoping flags:
 - `dashboard build`: generate `dashboard/learning_data.json` from `skills/qchi/learning/*`
 - `dashboard serve`: build and serve the dashboard at `http://127.0.0.1:<port>/dashboard/`
 - UI includes per-project trend lines by track with metric and rolling-window controls
+
+`qchi regression sweep` handles benchmark regression workflows:
+- default mode validates the suite schema and writes a summary JSON
+- `--results-file <json>` evaluates a full sweep from provided per-case outcomes
+- `--execute` runs each case via `qchi run` and logs eval/regression records
 
 The `run` command enforces mandatory role evidence:
 - planner

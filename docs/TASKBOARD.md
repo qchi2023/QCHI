@@ -18,6 +18,7 @@
 - [x] Added Rust `qchi-lint` scaffold and CI workflow
 - [x] Added adapter contract reference
 - [x] Added benchmark suite scaffold and CI validation (`tools/run_benchmarks.py`)
+- [x] Added regression sweep pipeline (`qchi regression sweep`, `tools/run_benchmarks.py --execute|--results-file`)
 - [x] Added LyX lint engine and CI hook (`tools/qchi_lyx_lint.py`)
 - [x] Added local learning dashboard (`dashboard/`, `scripts/run_learning_dashboard.sh`)
 - [x] Added chart view to local dashboard (trend lines by project/track)

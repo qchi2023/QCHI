@@ -15,7 +15,7 @@ from textwrap import dedent
 # This CLI enforces compliance by orchestrating host CLIs (Gemini/Codex/etc.)
 # through mandatory role-segregated sub-agents and local policy linting.
 
-QCHI_CLI_VERSION = "0.4.0"
+QCHI_CLI_VERSION = "0.5.0"
 
 SUPPORTED_HOSTS = ["gemini", "codex", "antigravity", "opencode"]
 HOST_BINARIES = {
@@ -45,6 +45,10 @@ LEARNING_TRACKS = ["physics", "writing", "coding-plotting"]
 PROJECT_HEURISTICS_TEMPLATE = "version: 1\nlast_updated: null\nheuristics: []\n"
 DEFAULT_DASHBOARD_PORT = 8787
 DEFAULT_DASHBOARD_BIND = "127.0.0.1"
+DEFAULT_BENCHMARK_SUITE = REPO_ROOT / "skills" / "qchi" / "learning" / "benchmarks" / "baseline_v1.json"
+DEFAULT_BENCHMARK_SUMMARY = (
+    REPO_ROOT / "skills" / "qchi" / "learning" / "benchmarks" / "last_run_summary.json"
+)
 
 CORE_REQUIRED_ROLES = [
     "planner",
@@ -986,8 +990,8 @@ def command_run(args):
     return 0
 
 
-def call_process(cmd):
-    result = subprocess.run(cmd, capture_output=True, text=True)
+def call_process(cmd, cwd=None):
+    result = subprocess.run(cmd, capture_output=True, text=True, cwd=str(cwd) if cwd else None)
     out = (result.stdout or "").strip()
     err = (result.stderr or "").strip()
     return result.returncode, out, err
@@ -1136,6 +1140,83 @@ def command_dashboard(args):
     return 1
 
 
+def command_regression(args):
+    if args.regression_command != "sweep":
+        print("[FATAL ERROR] unsupported regression command")
+        return 1
+
+    sweep_script = REPO_ROOT / "tools" / "run_benchmarks.py"
+    if not sweep_script.exists():
+        print(f"[FATAL ERROR] regression sweep script missing: {sweep_script}")
+        return 1
+
+    cmd = [
+        sys.executable,
+        str(sweep_script),
+        "--suite",
+        str(args.suite),
+        "--out",
+        str(args.out),
+        "--cpis-threshold",
+        str(args.cpis_threshold),
+        "--score-threshold",
+        str(args.score_threshold),
+        "--min-runs",
+        str(args.min_runs),
+        "--min-delta",
+        str(args.min_delta),
+        "--max-spread",
+        str(args.max_spread),
+        "--max-stddev",
+        str(args.max_stddev),
+        "--learning-dir",
+        str(args.learning_dir),
+        "--evals-file",
+        str(args.evals_file),
+        "--regressions-file",
+        str(args.regressions_file),
+    ]
+
+    if args.execute:
+        cmd.append("--execute")
+    if args.results_file:
+        cmd.extend(["--results-file", str(args.results_file)])
+    if args.no_log:
+        cmd.append("--no-log")
+    if args.baseline_summary:
+        cmd.extend(["--baseline-summary", str(args.baseline_summary)])
+    if args.before_commit:
+        cmd.extend(["--before-commit", str(args.before_commit)])
+    if args.after_commit:
+        cmd.extend(["--after-commit", str(args.after_commit)])
+
+    cmd.extend(
+        [
+            "--qchi-bin",
+            str(args.qchi_bin),
+            "--host",
+            args.host,
+            "--max-retries",
+            str(args.max_retries),
+        ]
+    )
+    if args.lint_bin:
+        cmd.extend(["--lint-bin", str(args.lint_bin)])
+    if args.run_artifacts_dir:
+        cmd.extend(["--run-artifacts-dir", str(args.run_artifacts_dir)])
+    if args.project_id:
+        cmd.extend(["--project-id", args.project_id])
+    if args.learning_track:
+        cmd.extend(["--learning-track", args.learning_track])
+
+    rc, out, err = call_process(cmd, cwd=REPO_ROOT)
+    if out:
+        print(out)
+    if err:
+        print(err)
+    return rc
+
+
 def git_short_commit():
     rc, out, _ = call_process(["git", "-C", str(REPO_ROOT), "rev-parse", "--short", "HEAD"])
     if rc == 0 and out:
@@ -1193,6 +1274,124 @@ def add_run_args(parser):
     )
 
 
+def add_regression_sweep_args(parser):
+    parser.add_argument(
+        "--suite",
+        default=str(DEFAULT_BENCHMARK_SUITE),
+        help=f"Benchmark suite JSON path (default: {DEFAULT_BENCHMARK_SUITE})",
+    )
+    parser.add_argument(
+        "--out",
+        default=str(DEFAULT_BENCHMARK_SUMMARY),
+        help=f"Output summary JSON path (default: {DEFAULT_BENCHMARK_SUMMARY})",
+    )
+    parser.add_argument(
+        "--execute",
+        action="store_true",
+        help="Execute each suite case through `qchi run`",
+    )
+    parser.add_argument(
+        "--results-file",
+        help="Optional case-result JSON input instead of execution",
+    )
+    parser.add_argument(
+        "--no-log",
+        action="store_true",
+        help="Do not append eval/regression records to learning JSONL",
+    )
+
+    parser.add_argument(
+        "--cpis-threshold",
+        type=float,
+        default=0.90,
+        help="Minimum CPIS required for regression pass (default: 0.90)",
+    )
+    parser.add_argument(
+        "--score-threshold",
+        type=float,
+        default=0.90,
+        help="Per-case score threshold used for CPIS hit counting (default: 0.90)",
+    )
+    parser.add_argument(
+        "--min-runs",
+        type=positive_int,
+        default=10,
+        help="Minimum evaluated cases required for CPIS gating (default: 10)",
+    )
+    parser.add_argument(
+        "--min-delta",
+        type=float,
+        default=0.0,
+        help="Minimum mean score delta versus baseline (default: 0.0)",
+    )
+    parser.add_argument(
+        "--max-spread",
+        type=float,
+        default=0.30,
+        help="Maximum allowed score spread max-min (default: 0.30)",
+    )
+    parser.add_argument(
+        "--max-stddev",
+        type=float,
+        default=0.20,
+        help="Maximum allowed score stddev (default: 0.20)",
+    )
+    parser.add_argument(
+        "--baseline-summary",
+        help="Optional previous summary JSON for stability delta check",
+    )
+    parser.add_argument("--before-commit", help="Optional baseline commit ref for regression record")
+    parser.add_argument("--after-commit", help="Optional candidate commit ref for regression record")
+
+    parser.add_argument(
+        "--learning-dir",
+        default=str(DEFAULT_LEARNING_DIR),
+        help=f"Learning root path (default: {DEFAULT_LEARNING_DIR})",
+    )
+    parser.add_argument(
+        "--evals-file",
+        default=str(DEFAULT_LEARNING_DIR / "evals.jsonl"),
+        help=f"Evals JSONL output (default: {DEFAULT_LEARNING_DIR / 'evals.jsonl'})",
+    )
+    parser.add_argument(
+        "--regressions-file",
+        default=str(DEFAULT_LEARNING_DIR / "regressions.jsonl"),
+        help=f"Regressions JSONL output (default: {DEFAULT_LEARNING_DIR / 'regressions.jsonl'})",
+    )
+
+    parser.add_argument(
+        "--qchi-bin",
+        default=str(REPO_ROOT / "bin" / "qchi"),
+        help=f"Path to qchi executable used for --execute (default: {REPO_ROOT / 'bin' / 'qchi'})",
+    )
+    parser.add_argument(
+        "--host",
+        choices=SUPPORTED_HOSTS,
+        default="gemini",
+        help="Host CLI for execution mode (default: gemini)",
+    )
+    parser.add_argument(
+        "--max-retries",
+        type=positive_int,
+        default=3,
+        help="Per-case max retries when executing (default: 3)",
+    )
+    parser.add_argument("--lint-bin", help="Optional qchi-lint binary path for execution mode")
+    parser.add_argument(
+        "--run-artifacts-dir",
+        help="Optional artifacts root for execution mode runs",
+    )
+    parser.add_argument(
+        "--project-id",
+        help="Optional project id forwarded to qchi run during execution mode",
+    )
+    parser.add_argument(
+        "--learning-track",
+        choices=LEARNING_TRACKS,
+        help="Optional project track forwarded to qchi run during execution mode",
+    )
+
+
 def build_parser():
     parser = argparse.ArgumentParser(description="QCHI CLI Orchestrator")
     subparsers = parser.add_subparsers(dest="command")
@@ -1234,6 +1433,15 @@ def build_parser():
     lint_jsonl.add_argument("--kind", required=True, choices=["runs", "evals", "regressions"])
     lint_jsonl.add_argument("--file", required=True, help="Path to JSONL file")
     lint_jsonl.set_defaults(handler=command_lint)
+
+    regression_parser = subparsers.add_parser("regression", help="Run regression sweep utilities")
+    regression_subparsers = regression_parser.add_subparsers(dest="regression_command", required=True)
+    regression_sweep = regression_subparsers.add_parser(
+        "sweep",
+        help="Validate or execute the benchmark regression suite",
+    )
+    add_regression_sweep_args(regression_sweep)
+    regression_sweep.set_defaults(handler=command_regression)
 
     version_parser = subparsers.add_parser("version", help="Print QCHI CLI version")
     version_parser.set_defaults(handler=command_version)
@@ -1277,7 +1485,7 @@ def normalize_argv(argv):
     if not argv:
         return argv
 
-    known = {"run", "doctor", "lint", "version", "dashboard", "-h", "--help"}
+    known = {"run", "doctor", "lint", "regression", "version", "dashboard", "-h", "--help"}
     first = argv[0]
     if first in known:
         return argv
