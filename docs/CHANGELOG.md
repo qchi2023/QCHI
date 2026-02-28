@@ -1,5 +1,32 @@
 # CHANGELOG
 
+## 2026-02-28
+- Upgraded `bin/qchi` from flat flags to subcommands:
+  - `run`
+  - `doctor`
+  - `lint`
+  - `version`
+- Kept backward compatibility for legacy invocation:
+  - `python3 bin/qchi --mode ... --task ...` maps to `run`
+- Enforced mandatory role pipeline in CLI runtime:
+  - planner
+  - derivation
+  - symbolic verifier
+  - numeric verifier
+  - referee
+  - integrator
+  - plus source miner for `paper_reproduction`
+- Added strict structured JSON role-contract parsing and policy blocking for missing/invalid role evidence.
+- Wired `qchi-lint` runtime checks into CLI orchestration and retry feedback loop.
+- Hardened Rust report lint to require:
+  - Four Horsemen check evidence (units, limits, asymptotics, consistency)
+  - symbolic verification status/tool/log evidence
+- Updated output templates for lint-compliant validation sections.
+- Added CLI usage examples in:
+  - `README.md`
+  - `docs/INSTALL_AND_USE.md`
+  - `docs/HOST_COMMANDS.md`
+
 ## 2026-02-20
 - Consolidated on `qchi` as canonical skill and removed deprecated `skills/qchi-top-layer` variant.
 - Hardened `KNOWLEDGE_SOURCES_POLICY.md` with license/access gates and source-record template.

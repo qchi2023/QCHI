@@ -45,6 +45,18 @@ bash scripts/bootstrap_opencode_ubuntu.sh
 
 See `docs/HOST_COMMANDS.md` for host-by-host quick commands.
 
+## QCHI CLI usage
+Run the orchestrator directly from this repo:
+
+```bash
+python3 bin/qchi doctor --host gemini
+python3 bin/qchi run --host gemini --mode physics_solve --task "derive harmonic oscillator normalization"
+python3 bin/qchi lint report --file templates/OUTPUT_TEMPLATE.md
+python3 bin/qchi version
+```
+
+Legacy compatibility: `python3 bin/qchi --mode ... --task ...` is still accepted and maps to `qchi run`.
+
 ## B) Generic host use (Codex, Claude Code, Cursor, Antigravity)
 
 1. Use canonical instructions from

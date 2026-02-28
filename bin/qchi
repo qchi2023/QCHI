@@ -2,6 +2,7 @@
 import argparse
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -13,7 +14,15 @@ from textwrap import dedent
 # This CLI enforces compliance by orchestrating host CLIs (Gemini/Codex/etc.)
 # through mandatory role-segregated sub-agents and local policy linting.
 
+QCHI_CLI_VERSION = "0.2.0"
+
 SUPPORTED_HOSTS = ["gemini", "codex", "antigravity", "opencode"]
+HOST_BINARIES = {
+    "gemini": "gemini",
+    "codex": "codex",
+    "antigravity": "antigravity",
+    "opencode": "opencode",
+}
 
 HOST_INSTALL_HINTS = {
     "gemini": "Install/auth Gemini CLI, then run: gemini --help",
@@ -613,15 +622,146 @@ def orchestrate(args):
     print("[*] QCHI Orchestration Complete.")
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="QCHI CLI Orchestrator")
+def command_run(args):
+    orchestrate(args)
+    return 0
+
+
+def call_process(cmd):
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    out = (result.stdout or "").strip()
+    err = (result.stderr or "").strip()
+    return result.returncode, out, err
+
+
+def print_check(status, label, detail):
+    print(f"[{status}] {label}: {detail}")
+
+
+def command_doctor(args):
+    lint_bin = resolve_lint_bin(args.lint_bin)
+    failures = 0
+    warnings = 0
+
+    print("QCHI doctor")
+    print(f"- repo: {REPO_ROOT}")
+    print(f"- selected host: {args.host}")
+    print(f"- lint binary path: {lint_bin}")
+
+    selected_host_binary = HOST_BINARIES[args.host]
+    if shutil.which(selected_host_binary):
+        print_check("PASS", f"host ({args.host})", f"found '{selected_host_binary}' in PATH")
+    else:
+        print_check("FAIL", f"host ({args.host})", HOST_INSTALL_HINTS[args.host])
+        failures += 1
+
+    if args.check_all_hosts:
+        for host in SUPPORTED_HOSTS:
+            if host == args.host:
+                continue
+            binary = HOST_BINARIES[host]
+            if shutil.which(binary):
+                print_check("PASS", f"host ({host})", f"found '{binary}' in PATH")
+            else:
+                print_check("WARN", f"host ({host})", "not installed in PATH")
+                warnings += 1
+
+    if lint_bin.exists():
+        if os.access(lint_bin, os.X_OK):
+            print_check("PASS", "qchi-lint binary", "exists and executable")
+
+            template_file = REPO_ROOT / "templates" / "OUTPUT_TEMPLATE.md"
+            rc, out, err = call_process([str(lint_bin), "report", "--file", str(template_file)])
+            if rc == 0:
+                print_check("PASS", "qchi-lint report check", out or "report lint passed")
+            else:
+                detail = err or out or f"exit code {rc}"
+                print_check("FAIL", "qchi-lint report check", detail)
+                failures += 1
+        else:
+            print_check("FAIL", "qchi-lint binary", "exists but is not executable")
+            failures += 1
+    else:
+        print_check(
+            "FAIL",
+            "qchi-lint binary",
+            (
+                f"not found at {lint_bin}. Build with: "
+                "cargo build --manifest-path tools/qchi-lint/Cargo.toml"
+            ),
+        )
+        failures += 1
+
+    if shutil.which("cargo"):
+        print_check("PASS", "cargo", "found in PATH")
+    else:
+        print_check("WARN", "cargo", "not found in PATH")
+        warnings += 1
+
+    if shutil.which("rustc"):
+        print_check("PASS", "rustc", "found in PATH")
+    else:
+        print_check("WARN", "rustc", "not found in PATH")
+        warnings += 1
+
+    print(f"\nDoctor summary: failures={failures}, warnings={warnings}")
+    return 1 if failures else 0
+
+
+def run_lint_command(lint_bin, lint_args):
+    if not lint_bin.exists():
+        print(
+            f"[FATAL ERROR] qchi-lint binary not found at {lint_bin}. "
+            "Build it first: cargo build --manifest-path tools/qchi-lint/Cargo.toml"
+        )
+        return 1
+
+    if not os.access(lint_bin, os.X_OK):
+        print(f"[FATAL ERROR] qchi-lint binary is not executable: {lint_bin}")
+        return 1
+
+    cmd = [str(lint_bin)] + lint_args
+    rc, out, err = call_process(cmd)
+    if out:
+        print(out)
+    if err:
+        print(err)
+    return rc
+
+
+def command_lint(args):
+    lint_bin = resolve_lint_bin(args.lint_bin)
+    if args.lint_command == "report":
+        return run_lint_command(lint_bin, ["report", "--file", args.file])
+    if args.lint_command == "jsonl":
+        return run_lint_command(lint_bin, ["jsonl", "--kind", args.kind, "--file", args.file])
+    print("[FATAL ERROR] unsupported lint command")
+    return 1
+
+
+def git_short_commit():
+    rc, out, _ = call_process(["git", "-C", str(REPO_ROOT), "rev-parse", "--short", "HEAD"])
+    if rc == 0 and out:
+        return out
+    return "unknown"
+
+
+def command_version(_args):
+    print(f"qchi-cli {QCHI_CLI_VERSION}")
+    print(f"repo: {REPO_ROOT}")
+    print(f"git: {git_short_commit()}")
+    print(f"python: {sys.version.split()[0]}")
+    return 0
+
+
+def add_run_args(parser):
     parser.add_argument(
         "--host",
         choices=SUPPORTED_HOSTS,
         default="gemini",
         help="Underlying AI CLI to drive (default: gemini)",
     )
-    parser.add_argument("--mode", required=True, help="QCHI Execution Mode")
+    parser.add_argument("--mode", required=True, help="QCHI execution mode")
     parser.add_argument("--task", required=True, help="The physics task or ArXiv ID")
     parser.add_argument(
         "--max-retries",
@@ -635,5 +775,87 @@ if __name__ == "__main__":
         help="Optional path to qchi-lint binary; defaults to env QCHI_LINT_BIN or local target path",
     )
 
-    args = parser.parse_args()
-    orchestrate(args)
+
+def build_parser():
+    parser = argparse.ArgumentParser(description="QCHI CLI Orchestrator")
+    subparsers = parser.add_subparsers(dest="command")
+
+    run_parser = subparsers.add_parser("run", help="Run QCHI multi-agent orchestration")
+    add_run_args(run_parser)
+    run_parser.set_defaults(handler=command_run)
+
+    doctor_parser = subparsers.add_parser("doctor", help="Check local environment for QCHI")
+    doctor_parser.add_argument(
+        "--host",
+        choices=SUPPORTED_HOSTS,
+        default="gemini",
+        help="Primary host CLI to validate (default: gemini)",
+    )
+    doctor_parser.add_argument(
+        "--check-all-hosts",
+        action="store_true",
+        help="Also check availability of all supported host CLIs",
+    )
+    doctor_parser.add_argument(
+        "--lint-bin",
+        help="Optional path to qchi-lint binary; defaults to env QCHI_LINT_BIN or local target path",
+    )
+    doctor_parser.set_defaults(handler=command_doctor)
+
+    lint_parser = subparsers.add_parser("lint", help="Run qchi-lint directly")
+    lint_parser.add_argument(
+        "--lint-bin",
+        help="Optional path to qchi-lint binary; defaults to env QCHI_LINT_BIN or local target path",
+    )
+    lint_subparsers = lint_parser.add_subparsers(dest="lint_command", required=True)
+
+    lint_report = lint_subparsers.add_parser("report", help="Lint a markdown report")
+    lint_report.add_argument("--file", required=True, help="Path to markdown report file")
+    lint_report.set_defaults(handler=command_lint)
+
+    lint_jsonl = lint_subparsers.add_parser("jsonl", help="Lint a learning JSONL file")
+    lint_jsonl.add_argument("--kind", required=True, choices=["runs", "evals", "regressions"])
+    lint_jsonl.add_argument("--file", required=True, help="Path to JSONL file")
+    lint_jsonl.set_defaults(handler=command_lint)
+
+    version_parser = subparsers.add_parser("version", help="Print QCHI CLI version")
+    version_parser.set_defaults(handler=command_version)
+
+    return parser
+
+
+def normalize_argv(argv):
+    # Backward compatibility: `qchi --mode ... --task ...` maps to `qchi run ...`.
+    if not argv:
+        return argv
+
+    known = {"run", "doctor", "lint", "version", "-h", "--help"}
+    first = argv[0]
+    if first in known:
+        return argv
+    if first.startswith("-"):
+        return ["run"] + argv
+    return argv
+
+
+def main(argv=None):
+    if argv is None:
+        argv = sys.argv[1:]
+
+    parser = build_parser()
+    argv = normalize_argv(argv)
+
+    if not argv:
+        parser.print_help()
+        return 1
+
+    args = parser.parse_args(argv)
+    if not hasattr(args, "handler"):
+        parser.print_help()
+        return 1
+
+    return args.handler(args)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

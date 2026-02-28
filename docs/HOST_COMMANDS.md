@@ -34,6 +34,14 @@ Host-specific adapter to load
 - Antigravity: `skills/qchi/adapters/antigravity.md`
 - Generic fallback (Codex or others): `skills/qchi/adapters/generic.md`
 
+## 2b) QCHI CLI (multi-agent orchestrator)
+```bash
+python3 bin/qchi doctor --host gemini
+python3 bin/qchi run --host gemini --mode physics_solve --task "your task here"
+python3 bin/qchi lint report --file templates/OUTPUT_TEMPLATE.md
+python3 bin/qchi version
+```
+
 ## 3) OpenClaw
 OpenClaw CLI commands
 ```bash

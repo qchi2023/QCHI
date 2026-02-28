@@ -70,4 +70,24 @@ flowchart TD
 - Rust lint scaffold: `tools/qchi-lint/`
 - CI workflow: `.github/workflows/qchi-lint.yml`
 - Conformance runner: `scripts/run_conformance.sh`
+
+## CLI quickstart
+QCHI includes an executable orchestrator at `bin/qchi`.
+
+```bash
+python3 bin/qchi doctor --host gemini
+python3 bin/qchi run --host gemini --mode physics_solve --task "derive harmonic oscillator normalization"
+python3 bin/qchi lint report --file templates/OUTPUT_TEMPLATE.md
+python3 bin/qchi version
+```
+
+The `run` command enforces mandatory role evidence:
+- planner
+- derivation
+- symbolic_verifier
+- numeric_verifier
+- referee
+- integrator
+
+For `paper_reproduction` mode, `source_miner` is also mandatory.
 <!-- Initializing QCHI fix phase - qchi2023 -->
