@@ -108,8 +108,11 @@
     </div>
 
     <div class="directive-box" id="directives">
-        <h2 style="color: #60a5fa; margin-top: 0;">User Directives & Suggestions (Editable)</h2>
-        <p><em>Type your instructions directly in the box below. I will read this section to guide my work.</em></p>
+        <h2 style="color: #60a5fa; margin-top: 0;">
+            User Directives & Suggestions (Auto-saving)
+            <span id="sync-status" style="font-size: 0.5em; margin-left: 10px; vertical-align: middle; color: #9ca3af;">● Offline</span>
+        </h2>
+        <p><em>Type your instructions directly in the box below. It will auto-save to disk.</em></p>
         <div id="user-notes" contenteditable="true">
             <!-- USER_START -->
             Click here and type your first directive...
@@ -227,6 +230,38 @@
                 closeModal();
             }
         }
+
+        // Auto-save logic
+        const notes = document.getElementById('user-notes');
+        const status = document.getElementById('sync-status');
+        let timeout = null;
+
+        notes.addEventListener('input', () => {
+            status.style.color = "#f59e0b";
+            status.innerText = "● Syncing...";
+            
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                fetch('http://localhost:8888', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content: notes.innerHTML })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        status.style.color = "#10b981";
+                        status.innerText = "● Saved to disk";
+                    } else {
+                        status.style.color = "#ef4444";
+                        status.innerText = "● Save error";
+                    }
+                })
+                .catch(err => {
+                    status.style.color = "#ef4444";
+                    status.innerText = "● Server offline";
+                });
+            }, 1000); // Save after 1 second of no typing
+        });
     </script>
 </body>
 </html>
