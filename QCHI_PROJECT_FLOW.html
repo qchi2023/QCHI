@@ -9,6 +9,7 @@
     <style>
         body { font-family: "SF Mono", "Monaco", "Inconsolata", monospace; line-height: 1.5; color: #d1d5db; max-width: 1200px; margin: 40px auto; padding: 20px; background: #111827; }
         h1, h2, h3 { color: #f3f4f6; border-bottom: 1px solid #374151; padding-bottom: 0.5em; }
+        .box { background: #1f2937; border: 1px solid #374151; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
         .grid { display: grid; grid-template-columns: 80px 1fr 1fr 150px; gap: 10px; margin-bottom: 20px; border: 1px solid #374151; border-radius: 4px; overflow: hidden; }
         .header { background: #1f2937; font-weight: bold; padding: 10px; border-bottom: 2px solid #374151; }
         .cell { padding: 10px; background: #111827; border-bottom: 1px solid #374151; font-size: 0.9em; }
@@ -21,6 +22,7 @@
         .gap-box { background: #311b1b; border: 1px solid #7f1d1d; padding: 15px; border-radius: 4px; margin-top: 20px; }
         .gap-title { color: #fca5a5; font-weight: bold; margin-bottom: 10px; }
         .mermaid { background: #1f2937; padding: 20px; border-radius: 8px; margin-bottom: 30px; border: 1px solid #374151; }
+        .directive-box { border: 2px solid #60a5fa; background: #1e293b; padding: 20px; border-radius: 8px; margin-top: 30px; }
     </style>
 </head>
 <body>
@@ -69,72 +71,43 @@
     <h3>2. Implementation Status Grid</h3>
     <div class="grid">
         <div class="header">Step</div>
-        <div class="header">Lifecycle Stage (What happens)</div>
-        <div class="header">Implementation (File/Standard)</div>
+        <div class="header">Lifecycle Stage</div>
+        <div class="header">Implementation</div>
         <div class="header">Status</div>
 
-        <!-- Step 1 -->
         <div class="cell step-num">01</div>
-        <div class="cell">Task Intake & Output Definition</div>
-        <div class="cell file-link">skills/qchi/SKILL.md (Output Sections)</div>
+        <div class="cell">Task Intake</div>
+        <div class="cell file-link">SKILL.md</div>
         <div class="cell status done">DONE</div>
 
-        <!-- Step 2 -->
-        <div class="cell step-num">02</div>
-        <div class="cell">Physical Regime & Assumptions</div>
-        <div class="cell file-link">templates/OUTPUT_TEMPLATE.md</div>
-        <div class="cell status done">DONE</div>
-
-        <!-- Step 3 -->
-        <div class="cell step-num">03</div>
-        <div class="cell">Derivation Path & Symbolic Code</div>
-        <div class="cell file-link">references/SYMBOLIC_VERIFICATION_POLICY.md</div>
-        <div class="cell status partial">PARTIAL</div>
-
-        <!-- Step 4 -->
         <div class="cell step-num">04</div>
-        <div class="cell">The "Four Horsemen" Checks (Units/Limits/etc)</div>
-        <div class="cell file-link">tools/qchi-lint/ (The Engine)</div>
+        <div class="cell">The "Four Horsemen" Checks</div>
+        <div class="cell file-link">tools/qchi-lint/</div>
         <div class="cell status missing">MISSING</div>
 
-        <!-- Step 5 -->
-        <div class="cell step-num">05</div>
-        <div class="cell">Numeric Verification (Fallback)</div>
-        <div class="cell file-link">references/MULTI_PATH_VERIFICATION.md</div>
-        <div class="cell status partial">PARTIAL</div>
-
-        <!-- Step 6 -->
-        <div class="cell step-num">06</div>
-        <div class="cell">Artifact Generation (LyX/MD)</div>
-        <div class="cell file-link">tools/init_lyx_artifacts.sh</div>
-        <div class="cell status done">DONE</div>
-
-        <!-- Step 7 -->
-        <div class="cell step-num">07</div>
-        <div class="cell">Claim Provenance Tagging</div>
-        <div class="cell file-link">SKILL.md (Provenance Rules)</div>
-        <div class="cell status done">DONE</div>
-
-        <!-- Step 8 -->
         <div class="cell step-num">08</div>
-        <div class="cell">Reproducibility Metadata & Learning Log</div>
-        <div class="cell file-link">learning/projects/TEMPLATE/</div>
+        <div class="cell">Learning Log</div>
+        <div class="cell file-link">learning/</div>
         <div class="cell status partial">SCAFFOLD</div>
     </div>
 
-    <div class="gap-box">
-        <div class="gap-title">CRITICAL ENGINE GAPS (The "Fix" List)</div>
-        <ul>
-            <li><strong>Linter Enforcement:</strong> <code>tools/qchi-lint/src/main.rs</code> is currently a skeleton. It must be updated to <em>parse</em> steps 4 and 7 to prevent unverified commits.</li>
-            <li><strong>Learning Loop Automation:</strong> The logic to compare <code>runs.jsonl</code> and update <code>heuristics.yaml</code> is non-existent.</li>
-            <li><strong>Conformance Validation:</strong> <code>scripts/run_conformance.sh</code> must be hardened to act as the "Master Health Check" for portability.</li>
-        </ul>
+    <div class="directive-box">
+        <h2 style="color: #60a5fa; margin-top: 0;">User Directives & Suggestions</h2>
+        <p><em>Add your specific instructions or feature requests below. I will read this section to guide the next 'Fix' steps.</em></p>
+        <div id="user-notes" style="background: #0f172a; padding: 15px; border-radius: 4px; min-height: 50px; border: 1px solid #334155;">
+            <!-- USER_START -->
+            No specific directives yet.
+            <!-- USER_END -->
+        </div>
     </div>
 
-    <h3>Operating Condition Check</h3>
-    <pre>
-# To verify the system is in "Working Condition":
-bash scripts/run_conformance.sh skills/qchi/learning/projects/TEMPLATE TEMPLATE
-    </pre>
+    <div class="gap-box">
+        <div class="gap-title">CRITICAL ENGINE GAPS</div>
+        <ul>
+            <li><strong>Linter Enforcement:</strong> Harden <code>tools/qchi-lint/src/main.rs</code>.</li>
+            <li><strong>Learning Loop Automation:</strong> Implement heuristic promotion logic.</li>
+            <li><strong>Conformance:</strong> Hardened <code>run_conformance.sh</code>.</li>
+        </ul>
+    </div>
 </body>
 </html>
