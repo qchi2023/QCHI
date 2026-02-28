@@ -15,7 +15,7 @@ from textwrap import dedent
 # This CLI enforces compliance by orchestrating host CLIs (Gemini/Codex/etc.)
 # through mandatory role-segregated sub-agents and local policy linting.
 
-QCHI_CLI_VERSION = "0.2.0"
+QCHI_CLI_VERSION = "0.3.0"
 
 SUPPORTED_HOSTS = ["gemini", "codex", "antigravity", "opencode"]
 HOST_BINARIES = {
@@ -39,6 +39,8 @@ DEFAULT_LINT_CANDIDATES = [
     REPO_ROOT / "tools" / "qchi-lint" / "target" / "release" / "qchi-lint",
 ]
 DEFAULT_RUN_ARTIFACTS_ROOT = REPO_ROOT / ".qchi" / "runs"
+DEFAULT_DASHBOARD_PORT = 8787
+DEFAULT_DASHBOARD_BIND = "127.0.0.1"
 
 CORE_REQUIRED_ROLES = [
     "planner",
@@ -923,6 +925,44 @@ def command_lint(args):
     return 1
 
 
+def build_learning_dashboard():
+    build_script = REPO_ROOT / "tools" / "build_learning_dashboard.py"
+    if not build_script.exists():
+        print(f"[FATAL ERROR] dashboard builder script missing: {build_script}")
+        return 1
+    rc, out, err = call_process([sys.executable, str(build_script)])
+    if out:
+        print(out)
+    if err:
+        print(err)
+    return rc
+
+
+def command_dashboard(args):
+    if args.dashboard_command == "build":
+        return build_learning_dashboard()
+
+    if args.dashboard_command == "serve":
+        if not args.skip_build:
+            rc = build_learning_dashboard()
+            if rc != 0:
+                return rc
+
+        url_host = args.bind
+        if url_host in {"0.0.0.0", "::"}:
+            url_host = "127.0.0.1"
+        print(f"Serving dashboard at http://{url_host}:{args.port}/dashboard/")
+        cmd = [sys.executable, "-m", "http.server", str(args.port), "--bind", args.bind]
+        try:
+            return subprocess.run(cmd, cwd=str(REPO_ROOT)).returncode
+        except KeyboardInterrupt:
+            print("\nDashboard server stopped.")
+            return 0
+
+    print("[FATAL ERROR] unsupported dashboard command")
+    return 1
+
+
 def git_short_commit():
     rc, out, _ = call_process(["git", "-C", str(REPO_ROOT), "rev-parse", "--short", "HEAD"])
     if rc == 0 and out:
@@ -1009,6 +1049,37 @@ def build_parser():
     version_parser = subparsers.add_parser("version", help="Print QCHI CLI version")
     version_parser.set_defaults(handler=command_version)
 
+    dashboard_parser = subparsers.add_parser("dashboard", help="Build or serve the learning dashboard UI")
+    dashboard_subparsers = dashboard_parser.add_subparsers(dest="dashboard_command", required=True)
+
+    dashboard_build = dashboard_subparsers.add_parser(
+        "build",
+        help="Generate dashboard/learning_data.json from learning store files",
+    )
+    dashboard_build.set_defaults(handler=command_dashboard)
+
+    dashboard_serve = dashboard_subparsers.add_parser(
+        "serve",
+        help="Build and serve dashboard at /dashboard/",
+    )
+    dashboard_serve.add_argument(
+        "--port",
+        type=positive_int,
+        default=DEFAULT_DASHBOARD_PORT,
+        help=f"HTTP port for the dashboard server (default: {DEFAULT_DASHBOARD_PORT})",
+    )
+    dashboard_serve.add_argument(
+        "--bind",
+        default=DEFAULT_DASHBOARD_BIND,
+        help=f"Bind address for HTTP server (default: {DEFAULT_DASHBOARD_BIND})",
+    )
+    dashboard_serve.add_argument(
+        "--skip-build",
+        action="store_true",
+        help="Serve existing dashboard data without rebuilding learning_data.json",
+    )
+    dashboard_serve.set_defaults(handler=command_dashboard)
+
     return parser
 
 
@@ -1017,7 +1088,7 @@ def normalize_argv(argv):
     if not argv:
         return argv
 
-    known = {"run", "doctor", "lint", "version", "-h", "--help"}
+    known = {"run", "doctor", "lint", "version", "dashboard", "-h", "--help"}
     first = argv[0]
     if first in known:
         return argv

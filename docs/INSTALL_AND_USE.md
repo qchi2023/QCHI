@@ -52,6 +52,8 @@ Run the orchestrator directly from this repo:
 python3 bin/qchi doctor --host gemini
 python3 bin/qchi run --host gemini --mode physics_solve --task "derive harmonic oscillator normalization"
 python3 bin/qchi lint report --file templates/OUTPUT_TEMPLATE.md
+python3 bin/qchi dashboard build
+python3 bin/qchi dashboard serve --port 8787
 python3 bin/qchi version
 ```
 
@@ -93,6 +95,6 @@ Legacy compatibility: `python3 bin/qchi --mode ... --task ...` is still accepted
 ## E) Learning visibility
 Local dashboard
 ```bash
-bash scripts/run_learning_dashboard.sh
+python3 bin/qchi dashboard serve --port 8787
 ```
 Then open `http://127.0.0.1:8787/dashboard/`

@@ -31,6 +31,14 @@
   - per-run `roles/`, `attempts/`, and `final/` outputs
   - persisted raw role outputs and parsed JSON role evidence
   - configurable artifact root via `--run-artifacts-dir` or `QCHI_RUN_ARTIFACTS_DIR`
+- Added dashboard UI command group to `bin/qchi`:
+  - `qchi dashboard build` generates `dashboard/learning_data.json`
+  - `qchi dashboard serve` rebuilds and serves the local dashboard at `/dashboard/`
+- Upgraded `dashboard/index.html` from minimal scaffold to responsive metrics UI with:
+  - global pass-rate cards and parse-error visibility
+  - per-project track breakdown (physics/writing/coding-plotting)
+  - heuristics summaries and expandable YAML views
+- Updated `scripts/run_learning_dashboard.sh` to call `qchi dashboard serve`.
 
 ## 2026-02-20
 - Consolidated on `qchi` as canonical skill and removed deprecated `skills/qchi-top-layer` variant.

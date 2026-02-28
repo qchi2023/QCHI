@@ -78,11 +78,17 @@ QCHI includes an executable orchestrator at `bin/qchi`.
 python3 bin/qchi doctor --host gemini
 python3 bin/qchi run --host gemini --mode physics_solve --task "derive harmonic oscillator normalization"
 python3 bin/qchi lint report --file templates/OUTPUT_TEMPLATE.md
+python3 bin/qchi dashboard build
+python3 bin/qchi dashboard serve --port 8787
 python3 bin/qchi version
 ```
 
 `qchi run` now saves run artifacts by default to `.qchi/runs/<task_id>/` including role outputs, attempt logs, and final summary.
 Override with `--run-artifacts-dir <path>` or `QCHI_RUN_ARTIFACTS_DIR`.
+
+`qchi dashboard` manages the local learning UI:
+- `dashboard build`: generate `dashboard/learning_data.json` from `skills/qchi/learning/*`
+- `dashboard serve`: build and serve the dashboard at `http://127.0.0.1:<port>/dashboard/`
 
 The `run` command enforces mandatory role evidence:
 - planner
