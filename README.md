@@ -70,3 +70,4 @@ flowchart TD
 - Rust lint scaffold: `tools/qchi-lint/`
 - CI workflow: `.github/workflows/qchi-lint.yml`
 - Conformance runner: `scripts/run_conformance.sh`
+<!-- Initializing QCHI fix phase - qchi2023 -->
