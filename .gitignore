@@ -5,3 +5,4 @@ __pycache__/
 node_modules/
 dist/*.zip
 .DS_Store
+tools/qchi-lint/target/

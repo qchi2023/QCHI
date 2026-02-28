@@ -7,10 +7,15 @@
 ## Derivation
 
 ## Validation checks
-- Unit check
-- Limiting-case check
-- Asymptotic check
-- Consistency check
+- Unit check: PASS (brief evidence)
+- Limiting-case check: PASS (brief evidence)
+- Asymptotic check: PASS (brief evidence)
+- Consistency check: PASS (brief evidence)
+- Symbolic verification: PASS (tool: Mathematica or SymPy)
+- Symbolic verification log:
+```text
+# include a compact Mathematica/SymPy command snippet and outcome
+```
 
 ## Final result
 
