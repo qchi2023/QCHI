@@ -94,10 +94,11 @@ reference "eq:schrodinger"
 \end_inset
 ```
 
-**CRITICAL LYX RULES:**
-1. A `.lyx` file must start with `#LyX 2.4 created this file.`
-2. You must balance every `\begin_inset` with an `\end_inset`.
-3. Never use a colon (`:`) in regular text unless explicitly requested by the user.
+**CRITICAL LYX EDITING RULES FOR LLMs:**
+1. **Block-Level Replacement Only:** When using standard string replacement tools to edit a `.lyx` file, you MUST replace the entire `\layout` or `\begin_inset` block. Never attempt to surgically replace single words or sentences, as this will break the hidden LyX syntax.
+2. A `.lyx` file must start with `#LyX 2.4 created this file.`
+3. You must balance every `\begin_inset` with an `\end_inset`.
+4. Never use a colon (`:`) in regular text unless explicitly requested by the user.
 
 See `references/LYX_DIRECT_AUTHORING_PROTOCOL.md` and `references/LYX_MINIMAL_TEMPLATE.lyx`.
 

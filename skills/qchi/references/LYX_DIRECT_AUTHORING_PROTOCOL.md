@@ -35,6 +35,12 @@ Goal
 - removed targets
   - remove dangling `\ref` in same change set
 
+## Safe Editing Protocol for LLMs
+Because LLMs often break `.lyx` files when using standard "find and replace" tools, you MUST follow these editing rules:
+1. **Block-Level Replacement Only:** Never attempt to replace a single word or sentence inside a LyX paragraph. You must replace the ENTIRE `\layout Standard` block, from the `\layout` declaration to the empty line following it.
+2. **Equation Replacement:** If you need to fix a math error, replace the entire `\begin_inset Formula ... \end_inset` block. Do not try to surgically edit the LaTeX inside it.
+3. **Include the Wrappers:** When providing the `old_string` for a replacement tool, always include the `\layout` or `\begin_inset` tags to ensure you are targeting the exact structural block, preventing syntax corruption.
+
 ## Quality gates for LyX edits
 - zero missing labels on equation figure table section
 - zero hardcoded internal numbers (Equation 3, Fig 2, Section 4)
