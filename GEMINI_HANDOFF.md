@@ -23,8 +23,9 @@ The user has switched machines. Read this document carefully. It contains the ex
 
 ## Setup Instructions for the New Machine
 Before you begin coding, ensure the new environment is ready:
-1.  Verify the repo is cloned and on the `feat/cli-development` branch.
-2.  Ensure Rust is installed (`cargo --version`).
-3.  Ensure the AI host CLI (e.g., `gemini`) is installed and authenticated on the new system PATH.
+1.  **SSH Auth Setup:** The user has migrated their specific `id_ed25519_qchi` private key to this new machine. Ensure git is configured to use it (e.g., via `ssh-add` or `~/.ssh/config`) so we can push to `git@github.com:qchi2023/QCHI.git`.
+2.  Verify the repo is cloned and on the `feat/cli-development` branch.
+3.  Ensure Rust is installed (`cargo --version`).
+4.  Ensure the AI host CLI (e.g., `gemini`) is installed and authenticated on the new system PATH.
 
 **End of Handoff.**
