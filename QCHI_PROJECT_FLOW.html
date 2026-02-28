@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QCHI: Technical Lifecycle & Implementation Map</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({ startOnLoad: true, theme: 'dark' });</script>
     <style>
         body { font-family: "SF Mono", "Monaco", "Inconsolata", monospace; line-height: 1.5; color: #d1d5db; max-width: 1200px; margin: 40px auto; padding: 20px; background: #111827; }
         h1, h2, h3 { color: #f3f4f6; border-bottom: 1px solid #374151; padding-bottom: 0.5em; }
@@ -18,12 +20,53 @@
         .file-link { color: #9ca3af; font-style: italic; }
         .gap-box { background: #311b1b; border: 1px solid #7f1d1d; padding: 15px; border-radius: 4px; margin-top: 20px; }
         .gap-title { color: #fca5a5; font-weight: bold; margin-bottom: 10px; }
+        .mermaid { background: #1f2937; padding: 20px; border-radius: 8px; margin-bottom: 30px; border: 1px solid #374151; }
     </style>
 </head>
 <body>
-    <h1>QCHI: Technical Lifecycle & Implementation Map</h1>
+    <h1>QCHI: Research Operating Layer Lifecycle</h1>
     <p>This map connects the <strong>Portable Workflow Specification</strong> to the <strong>Engine Code</strong>.</p>
 
+    <h3>1. End-to-End Execution Flow (Visual)</h3>
+    <div class="mermaid">
+    flowchart TD
+        A[User task] --> B[Select mode and project scope]
+        B --> C[Derivation-first execution]
+        C --> D[Validation checks<br/>units limits asymptotics consistency]
+        D --> E[Verification<br/>symbolic + numeric where applicable]
+        E --> F[Claim provenance tagging]
+        F --> G[Artifact output<br/>notes.lyx systematics_plots.lyx publishable_draft.lyx]
+        G --> H[Quality gate]
+        H -->|pass| I[Log learning artifacts]
+        H -->|fail| C
+
+        I --> P1[Project track physics]
+        I --> P2[Project track writing]
+        I --> P3[Project track coding-plotting]
+
+        P1 --> I1[runs.jsonl evals.jsonl regressions.jsonl heuristics.yaml]
+        P2 --> I2[runs.jsonl evals.jsonl regressions.jsonl heuristics.yaml]
+        P3 --> I3[runs.jsonl evals.jsonl regressions.jsonl heuristics.yaml]
+
+        I1 --> J[Regression suite plus promotion gates]
+        I2 --> J
+        I3 --> J
+
+        J -->|improves reliability| K[Promote heuristic or behavior]
+        J -->|regression detected| L[Revert or keep as candidate]
+
+        K --> M[Commit and push to GitHub]
+        L --> M
+
+        M --> R[Friend branch or PR contribution]
+        R --> S[CI gates qchi-lint plus project-learning validator]
+        S -->|pass| T[Merge to main]
+        S -->|fail| U[Fix and rerun]
+
+        T --> N[Portable reuse across hosts<br/>OpenClaw Codex Claude Code Cursor Antigravity]
+    </div>
+
+    <h3>2. Implementation Status Grid</h3>
     <div class="grid">
         <div class="header">Step</div>
         <div class="header">Lifecycle Stage (What happens)</div>
