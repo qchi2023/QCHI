@@ -5,7 +5,7 @@
 QCHI is a physics-focused multi-agent system with three user interfaces:
 
 1. `qchi cli` for terminal-first usage.
-2. `qchi desktop` for a VS Code/Antigravity-style desktop app.
+2. `qchi desktop` for a VS Code/Antigravity-style desktop app (look and workflow only).
 3. `qchi whatsapp` for chat-based control and responses.
 
 Optional:
@@ -28,6 +28,9 @@ Desktop app should feel like Antigravity/VS Code:
 - Center: tabbed editor for files and outputs.
 - Right: AI panel (task input, agent activity, run output, logs).
 - Bottom: terminal panel.
+
+Design principle:
+- Mimic the interface pattern, not the full VS Code product stack.
 
 ## What Is Already Done
 
@@ -59,27 +62,25 @@ Desktop app should feel like Antigravity/VS Code:
 
 ## Engineering Decision
 
-Primary direction: VS Code-based desktop product with custom QCHI behavior.
+Primary direction: custom QCHI desktop product with a VS Code-like interface.
 
 Practical implementation path:
-- Use Code-OSS as the base (VS Code open-source core).
-- Build QCHI as a first-class extension/workbench integration.
+- Build a lightweight custom workbench UI (desktop-first).
 - Keep QCHI Python backend as orchestration engine.
 - Keep provider layer open so user can choose any AI host/provider.
+- Keep AI behavior owned by QCHI logic, not generic prompt-skill templates.
 
 Important scope control:
-- V1 should avoid deep core patching of VS Code internals.
-- Prefer extension-level customization + branding + commands first.
-- If needed later, move to deeper fork changes in V2+.
+- V1 should avoid full VS Code fork maintenance burden.
+- Prioritize fast, focused product delivery for physics workflows.
+- Use modular architecture so deeper desktop customization can be added later.
 
-## Lite VS Code Profile (Required)
+## Lite Workbench Profile (Required)
 
-QCHI desktop should be a lightweight Code-OSS distribution, not full heavyweight VS Code.
+QCHI desktop should be a lightweight custom workbench, not full heavyweight VS Code.
 
 V1 constraints:
 - Keep only features needed for QCHI workflow: explorer, editor tabs, terminal, QCHI AI panel.
-- Disable/remove non-essential built-in extensions and views.
-- Disable telemetry and update checks for this custom build.
 - Keep startup fast and memory usage lower than stock full setup.
 - Physics-first UX: QCHI controls should be top-level, not buried.
 
@@ -134,13 +135,10 @@ Desktop should consume existing endpoints:
 
 ## Immediate Next Work
 
-1. Bootstrap Code-OSS workspace locally (checked-out source, buildable state).
-2. Create `qchi-vscode-extension/` with:
-   - provider-agnostic AI adapters
-   - physics task command palette actions
-   - agent output/log panels
-3. Add `qchi desktop` launcher command to start the customized desktop product.
-4. Integrate extension with existing local backend APIs.
+1. Implement `qchi desktop` launcher command for Linux desktop mode.
+2. Build a custom lite workbench UI with 4-pane layout.
+3. Integrate workbench with existing local backend APIs.
+4. Add provider selector and run controls in AI panel.
 5. Verify Linux run flow and document install/build/run.
 
 ## AI Provider Flexibility (Requirement)
@@ -152,3 +150,13 @@ QCHI desktop must support selectable providers at runtime:
 3. Anthropic (if configured).
 4. Local models (e.g., Ollama) through compatible adapter.
 5. Custom command template adapter (advanced users).
+
+## AI Behavior Contract (Required)
+
+QCHI must not depend on weak "skill prompt packs" as core behavior.
+
+Required AI architecture:
+- Behavior is driven by QCHI pipeline code (planner/solver/checker/refiner flow).
+- Prompts are generated from structured templates + runtime state, not ad-hoc manual skills.
+- Physics-specific guardrails, units checks, and verification steps are enforced in code.
+- Provider adapters are interchangeable; workflow behavior stays consistent across providers.

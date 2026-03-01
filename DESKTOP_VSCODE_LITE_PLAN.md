@@ -1,4 +1,4 @@
-# QCHI Desktop (VS Code Lite) Execution Plan
+# QCHI Desktop (Workbench Lite) Execution Plan
 
 ## Goal
 
@@ -15,6 +15,9 @@ Core UX target:
 - Right: AI control and run output
 - Bottom: terminal
 
+Constraint:
+- Interface can be VS Code-like, but we are not building a full VS Code fork.
+
 ## Why This Plan
 
 - Full VS Code fork parity is too slow for current timeline.
@@ -26,7 +29,7 @@ Core UX target:
 ### In Scope (V1)
 
 1. Add `desktop` subcommand in `bin/qchi`/`qchi_cli.py`.
-2. Create a lightweight desktop shell (`desktop/`) based on Code-OSS-inspired layout and behavior.
+2. Create a lightweight desktop shell (`desktop/`) based on VS Code-like layout and behavior.
 3. Connect UI to existing QCHI APIs:
    - `/api/config`
    - `/api/status`
@@ -49,6 +52,7 @@ Core UX target:
 1. Full deep fork of VS Code internals.
 2. Rewriting backend orchestration in Rust.
 3. Full marketplace/extension compatibility layer.
+4. Prompt-skill-pack-driven AI behavior as the primary logic.
 
 ## Architecture (V1)
 
@@ -60,6 +64,9 @@ Core UX target:
    - Provider selection + physics task controls in AI panel.
 3. Orchestration:
    - Existing QCHI host adapters remain primary execution path.
+4. AI behavior layer:
+   - QCHI-owned planner/solver/checker/refiner pipeline.
+   - Structured templates and runtime state, not ad-hoc skills as core.
 
 ## Milestones
 
@@ -103,6 +110,7 @@ Done when:
 1. Add provider selector in UI/config.
 2. Support Codex/Gemini/custom command in V1.
 3. Persist last-used provider and run settings.
+4. Keep provider-independent physics workflow rules in backend code.
 
 Done when:
 - User can switch provider without code edits.
@@ -122,6 +130,7 @@ Done when:
 2. Do not block on perfect visuals; prioritize runnable architecture.
 3. Do not regress existing CLI/WhatsApp behavior.
 4. Preserve current dirty worktree files unless explicitly asked.
+5. Do not introduce a VS Code fork dependency for V1.
 
 ## Suggested File Touches (Expected)
 
@@ -137,6 +146,7 @@ Done when:
 1. Existing worktree contains many pending changes; avoid accidental staging.
 2. Port collisions on local dev machine; implement auto-fallback.
 3. Desktop dependencies may vary across Linux distros; document prerequisites.
+4. AI behavior quality can drift if too much is delegated to free-form prompts.
 
 ## Acceptance Checklist
 
@@ -147,4 +157,4 @@ Done when:
 5. AI task submit + output polling works.
 6. Existing commands still pass smoke checks.
 7. Docs are updated with exact run steps.
-
+8. AI flow is QCHI-controlled and provider-agnostic.
