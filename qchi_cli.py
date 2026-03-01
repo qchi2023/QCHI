@@ -49,6 +49,7 @@ DEFAULT_BENCHMARK_SUITE = REPO_ROOT / "skills" / "qchi" / "learning" / "benchmar
 DEFAULT_BENCHMARK_SUMMARY = (
     REPO_ROOT / "skills" / "qchi" / "learning" / "benchmarks" / "last_run_summary.json"
 )
+DEFAULT_HOST_TIMEOUT_SEC = 300
 
 CORE_REQUIRED_ROLES = [
     "planner",
@@ -275,7 +276,8 @@ def host_command(host_name, prompt):
     if host_name == "gemini":
         return ["gemini", "-p", prompt]
     if host_name == "codex":
-        return ["codex", "--prompt", prompt]
+        # Use non-interactive exec mode so orchestration works without a TTY.
+        return ["codex", "exec", "--color", "never", prompt]
     if host_name == "antigravity":
         return ["antigravity", "run", prompt]
     if host_name == "opencode":
@@ -283,7 +285,7 @@ def host_command(host_name, prompt):
     raise ValueError(f"Unknown host: {host_name}")
 
 
-def execute_host(host_name, prompt):
+def execute_host(host_name, prompt, timeout_sec=None):
     """
     Executes the prompt using the specified local AI CLI.
     This avoids API keys by using the host's existing auth state.
@@ -291,12 +293,23 @@ def execute_host(host_name, prompt):
     cmd = host_command(host_name, prompt)
 
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=timeout_sec if timeout_sec else None,
+        )
         return result.stdout.strip()
     except FileNotFoundError as exc:
         hint = HOST_INSTALL_HINTS.get(host_name, "Install the host CLI and verify it is in PATH.")
         raise HostExecutionError(
             f"The host CLI '{host_name}' is not installed or not in PATH. Hint: {hint}"
+        ) from exc
+    except subprocess.TimeoutExpired as exc:
+        timeout_value = timeout_sec if timeout_sec else "unknown"
+        raise HostExecutionError(
+            f"The host '{host_name}' timed out after {timeout_value}s."
         ) from exc
     except subprocess.CalledProcessError as e:
         stderr = (e.stderr or "").strip()
@@ -305,7 +318,7 @@ def execute_host(host_name, prompt):
         raise HostExecutionError(f"The host '{host_name}' returned an error: {details}") from e
 
 
-def run_markdown_agent(host, role_name, instructions, task_context):
+def run_markdown_agent(host, role_name, instructions, task_context, host_timeout_sec=None):
     print(f"[*] Spawning [{role_name.upper()}] Agent via {host}...")
 
     prompt = dedent(
@@ -323,7 +336,7 @@ def run_markdown_agent(host, role_name, instructions, task_context):
     ).strip()
 
     try:
-        return execute_host(host, prompt)
+        return execute_host(host, prompt, timeout_sec=host_timeout_sec)
     except HostExecutionError as exc:
         raise RuntimeError(f"{role_name} execution failed: {exc}") from exc
 
@@ -425,6 +438,7 @@ def run_structured_agent(
     subtask_id,
     to_role,
     raw_output_hook=None,
+    host_timeout_sec=None,
 ):
     role_name = ROLE_DISPLAY_NAMES.get(role_key, role_key)
     print(f"[*] Spawning [{role_name.upper()}] Agent via {host}...")
@@ -466,7 +480,7 @@ def run_structured_agent(
     ).strip()
 
     try:
-        raw = execute_host(host, prompt)
+        raw = execute_host(host, prompt, timeout_sec=host_timeout_sec)
     except HostExecutionError as exc:
         return None, f"{role_key} execution failed: {exc}"
     if raw_output_hook is not None:
@@ -672,6 +686,7 @@ def orchestrate(args):
             "mode": args.mode,
             "task": args.task,
             "max_retries": args.max_retries,
+            "host_timeout_sec": args.host_timeout_sec,
             "role_pipeline": role_pipeline,
             "lint_bin": str(lint_bin),
             "run_artifacts_root": str(run_artifacts_root),
@@ -738,6 +753,7 @@ def orchestrate(args):
         "planner-main",
         "derivation",
         raw_output_hook=lambda raw, path=planner_raw_path: write_text_file(path, raw),
+        host_timeout_sec=args.host_timeout_sec,
     )
     if planner_error:
         fatal_policy_failure(planner_error, run_dir=run_dir, on_failure=persist_run_record)
@@ -759,6 +775,7 @@ def orchestrate(args):
             "source-plan",
             "derivation",
             raw_output_hook=lambda raw, path=source_raw_path: write_text_file(path, raw),
+            host_timeout_sec=args.host_timeout_sec,
         )
         if source_error:
             fatal_policy_failure(source_error, run_dir=run_dir, on_failure=persist_run_record)
@@ -801,6 +818,7 @@ def orchestrate(args):
                 f"Derivation (Attempt {attempt})",
                 deriver_instructions,
                 "\n\n".join(derivation_context_parts),
+                host_timeout_sec=args.host_timeout_sec,
             )
         except RuntimeError as exc:
             abort_run(str(exc), "derivation_execution_failed")
@@ -841,6 +859,7 @@ def orchestrate(args):
             f"symbolic-attempt-{attempt}",
             "integrator",
             raw_output_hook=lambda raw, path=symbolic_raw_path: write_text_file(path, raw),
+            host_timeout_sec=args.host_timeout_sec,
         )
         if symbolic_error:
             fatal_policy_failure(symbolic_error, run_dir=run_dir, on_failure=persist_run_record)
@@ -856,6 +875,7 @@ def orchestrate(args):
             f"numeric-attempt-{attempt}",
             "integrator",
             raw_output_hook=lambda raw, path=numeric_raw_path: write_text_file(path, raw),
+            host_timeout_sec=args.host_timeout_sec,
         )
         if numeric_error:
             fatal_policy_failure(numeric_error, run_dir=run_dir, on_failure=persist_run_record)
@@ -871,6 +891,7 @@ def orchestrate(args):
             f"referee-attempt-{attempt}",
             "integrator",
             raw_output_hook=lambda raw, path=referee_raw_path: write_text_file(path, raw),
+            host_timeout_sec=args.host_timeout_sec,
         )
         if referee_error:
             fatal_policy_failure(referee_error, run_dir=run_dir, on_failure=persist_run_record)
@@ -900,6 +921,7 @@ def orchestrate(args):
             f"integrator-attempt-{attempt}",
             "final",
             raw_output_hook=lambda raw, path=integrator_raw_path: write_text_file(path, raw),
+            host_timeout_sec=args.host_timeout_sec,
         )
         if integrator_error:
             fatal_policy_failure(integrator_error, run_dir=run_dir, on_failure=persist_run_record)
@@ -963,6 +985,7 @@ def orchestrate(args):
             "task": args.task,
             "role_pipeline": role_pipeline,
             "max_retries": args.max_retries,
+            "host_timeout_sec": args.host_timeout_sec,
             "accepted_attempt": accepted_attempt,
             "lint_bin": str(lint_bin),
             "run_dir": str(run_dir),
@@ -1198,6 +1221,8 @@ def command_regression(args):
             args.host,
             "--max-retries",
             str(args.max_retries),
+            "--host-timeout-sec",
+            str(args.host_timeout_sec),
         ]
     )
     if args.lint_bin:
@@ -1246,6 +1271,12 @@ def add_run_args(parser):
         type=positive_int,
         default=3,
         help="Maximum derivation retries after quality-gate failure (default: 3)",
+    )
+    parser.add_argument(
+        "--host-timeout-sec",
+        type=positive_int,
+        default=DEFAULT_HOST_TIMEOUT_SEC,
+        help=f"Per-role host CLI timeout in seconds (default: {DEFAULT_HOST_TIMEOUT_SEC})",
     )
     parser.add_argument("--output-file", help="Optional file path for writing the accepted derivation")
     parser.add_argument(
@@ -1375,6 +1406,12 @@ def add_regression_sweep_args(parser):
         type=positive_int,
         default=3,
         help="Per-case max retries when executing (default: 3)",
+    )
+    parser.add_argument(
+        "--host-timeout-sec",
+        type=positive_int,
+        default=DEFAULT_HOST_TIMEOUT_SEC,
+        help=f"Per-role host CLI timeout forwarded to qchi run (default: {DEFAULT_HOST_TIMEOUT_SEC})",
     )
     parser.add_argument("--lint-bin", help="Optional qchi-lint binary path for execution mode")
     parser.add_argument(

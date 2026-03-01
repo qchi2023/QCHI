@@ -244,6 +244,8 @@ def execute_suite_case(case, args, sweep_id, run_root):
         case["target"],
         "--max-retries",
         str(args.max_retries),
+        "--host-timeout-sec",
+        str(args.host_timeout_sec),
         "--run-artifacts-dir",
         str(run_root),
         "--learning-dir",
@@ -439,6 +441,7 @@ def parse_args():
     parser.add_argument("--qchi-bin", default=str(DEFAULT_QCHI_BIN))
     parser.add_argument("--host", default="gemini")
     parser.add_argument("--max-retries", type=positive_int, default=3)
+    parser.add_argument("--host-timeout-sec", type=positive_int, default=300)
     parser.add_argument("--lint-bin")
     parser.add_argument("--run-artifacts-dir")
     parser.add_argument("--project-id")

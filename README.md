@@ -81,6 +81,22 @@ python3 -m pip install --no-build-isolation --no-deps -e .
 qchi version
 ```
 
+If your local virtualenv does not ship `setuptools`, use:
+
+```bash
+python3 -m venv --system-site-packages .venv
+.venv/bin/python -m pip install --no-build-isolation --no-deps -e .
+.venv/bin/qchi version
+```
+
+To load QCHI as an OpenClaw workspace skill:
+
+```bash
+mkdir -p ~/.openclaw/workspace/skills
+rsync -a skills/qchi/ ~/.openclaw/workspace/skills/qchi/
+openclaw skills check
+```
+
 ```bash
 python3 bin/qchi doctor --host gemini
 python3 bin/qchi run --host gemini --mode physics_solve --task "derive harmonic oscillator normalization"
@@ -93,6 +109,7 @@ python3 bin/qchi version
 
 `qchi run` now saves run artifacts by default to `.qchi/runs/<task_id>/` including role outputs, attempt logs, and final summary.
 Override with `--run-artifacts-dir <path>` or `QCHI_RUN_ARTIFACTS_DIR`.
+Use `--host-timeout-sec <seconds>` to bound per-role host CLI calls and fail fast on stalled host responses.
 
 `qchi run` also appends a learning run record by default to `skills/qchi/learning/runs.jsonl`.
 Optional scoping flags:
@@ -109,6 +126,7 @@ Optional scoping flags:
 - default mode validates the suite schema and writes a summary JSON
 - `--results-file <json>` evaluates a full sweep from provided per-case outcomes
 - `--execute` runs each case via `qchi run` and logs eval/regression records
+- `--host-timeout-sec <seconds>` forwards timeout control to each execution-mode `qchi run`
 
 The `run` command enforces mandatory role evidence:
 - planner

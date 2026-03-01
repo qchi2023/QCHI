@@ -30,6 +30,11 @@ Host runtime (choose one)
 
 2. Install in OpenClaw
 - Import a `.skill` artifact in OpenClaw, or install from the `skills/qchi/` source according to your OpenClaw setup
+- Workspace source install (OpenClaw AgentSkills layout):
+  - `mkdir -p ~/.openclaw/workspace/skills`
+  - `rsync -a skills/qchi/ ~/.openclaw/workspace/skills/qchi/`
+  - `openclaw skills check`
+  - `openclaw skills list --eligible`
 
 3. Use
 - Ask tasks that match the skill scope, for example
@@ -64,8 +69,16 @@ python3 -m pip install --no-build-isolation --no-deps -e .
 qchi version
 ```
 
+If your venv is missing build backend packages, create it with system packages:
+```bash
+python3 -m venv --system-site-packages .venv
+.venv/bin/python -m pip install --no-build-isolation --no-deps -e .
+.venv/bin/qchi version
+```
+
 By default, `qchi run` writes run artifacts to `.qchi/runs/<task_id>/` (role outputs, attempt logs, final summary).
 Set `--run-artifacts-dir <path>` or `QCHI_RUN_ARTIFACTS_DIR` to change the artifact root.
+Use `--host-timeout-sec <seconds>` to cap each role host call and fail cleanly if a host command stalls.
 
 By default, `qchi run` appends a learning record to `skills/qchi/learning/runs.jsonl`.
 Optional logging controls:
@@ -77,6 +90,7 @@ Optional logging controls:
 - schema validation (default)
 - score-driven sweep with `--results-file <json>`
 - execution sweep with `--execute` (runs each benchmark case via `qchi run`)
+- execution timeout forwarding with `--host-timeout-sec <seconds>`
 
 Legacy compatibility: `python3 bin/qchi --mode ... --task ...` is still accepted and maps to `qchi run`.
 

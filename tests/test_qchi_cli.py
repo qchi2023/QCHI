@@ -4,6 +4,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 import qchi_cli
 
@@ -21,6 +22,50 @@ class QchiCliTests(unittest.TestCase):
         self.assertEqual(qchi_cli.infer_learning_track("paper_reproduction"), "writing")
         self.assertEqual(qchi_cli.infer_learning_track("plot_sweep"), "coding-plotting")
         self.assertEqual(qchi_cli.infer_learning_track("physics_solve"), "physics")
+
+    def test_host_command_codex_uses_exec_mode(self):
+        cmd = qchi_cli.host_command("codex", "hello world")
+        self.assertEqual(cmd, ["codex", "exec", "--color", "never", "hello world"])
+
+    def test_run_parser_accepts_host_timeout(self):
+        parser = qchi_cli.build_parser()
+        args = parser.parse_args(
+            [
+                "run",
+                "--mode",
+                "physics_solve",
+                "--task",
+                "demo",
+                "--host-timeout-sec",
+                "42",
+            ]
+        )
+        self.assertEqual(args.host_timeout_sec, 42)
+
+    def test_regression_wrapper_passes_host_timeout(self):
+        parser = qchi_cli.build_parser()
+        args = parser.parse_args(
+            [
+                "regression",
+                "sweep",
+                "--execute",
+                "--host-timeout-sec",
+                "17",
+            ]
+        )
+        captured = {}
+
+        def fake_call_process(cmd, cwd=None):
+            captured["cmd"] = cmd
+            return 0, "", ""
+
+        with mock.patch.object(qchi_cli, "call_process", side_effect=fake_call_process):
+            rc = qchi_cli.command_regression(args)
+
+        self.assertEqual(rc, 0)
+        self.assertIn("--host-timeout-sec", captured["cmd"])
+        idx = captured["cmd"].index("--host-timeout-sec")
+        self.assertEqual(captured["cmd"][idx + 1], "17")
 
     def test_project_learning_layout_creation(self):
         with tempfile.TemporaryDirectory() as td:

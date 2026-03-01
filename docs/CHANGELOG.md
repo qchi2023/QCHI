@@ -64,6 +64,12 @@
   - writes CPIS/stability metrics to summary JSON and can append:
     - per-case eval rows to `skills/qchi/learning/evals.jsonl`
     - suite-level decision rows to `skills/qchi/learning/regressions.jsonl`
+- Fixed Codex host adapter invocation for current Codex CLI:
+  - switched from `codex --prompt` to non-interactive `codex exec`
+- Synced package metadata version in `pyproject.toml` to `0.5.0`.
+- Added host timeout controls for orchestration stability:
+  - new `qchi run --host-timeout-sec <seconds>`
+  - regression execution forwards timeout via `qchi regression sweep --host-timeout-sec`
 
 ## 2026-02-20
 - Consolidated on `qchi` as canonical skill and removed deprecated `skills/qchi-top-layer` variant.

@@ -47,6 +47,7 @@ python3 bin/qchi version
 
 Run artifacts are saved by default under `.qchi/runs/<task_id>/`.
 Override artifact root with `--run-artifacts-dir <path>` or `QCHI_RUN_ARTIFACTS_DIR`.
+Use `--host-timeout-sec <seconds>` to prevent stalled host subprocess calls from blocking forever.
 Learning runs are appended by default to `skills/qchi/learning/runs.jsonl`.
 Use `--project-id` and optional `--learning-track` for project-scoped run logs.
 Use `qchi regression sweep --results-file <json>` for full-suite scoring from recorded case results, or `--execute` to run cases through the orchestrator.
@@ -57,6 +58,14 @@ OpenClaw CLI commands
 openclaw gateway status
 openclaw gateway start
 openclaw gateway restart
+```
+
+Install QCHI skill into OpenClaw workspace
+```bash
+mkdir -p ~/.openclaw/workspace/skills
+rsync -a skills/qchi/ ~/.openclaw/workspace/skills/qchi/
+openclaw skills check
+openclaw skills list --eligible
 ```
 
 For OpenClaw-specific options use
